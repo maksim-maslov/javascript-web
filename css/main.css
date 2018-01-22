@@ -58,7 +58,8 @@ body {
 }
 
 .contacts__item_active {
-	background-color: #fafafa;
+	background-color: #eeeeee;
+	transition: background-color 0.7s ease-in-out;
 }
 
 .contacts-item__avatar {
@@ -111,12 +112,15 @@ body {
 }
 
 .top-section__text {
-	display: inline-block;
+	display: inline-block;	
+}
+
+.top-section-text__name {
 	font: 14px robotoregular;
 	color: rgba(0, 0, 0, 0.8);
 }
 
-.top-section__text__status {
+.top-section-text__status {
 	font: 11px robotoregular;
 	color: rgba(0, 0, 0, 0.4);
 }
@@ -149,7 +153,7 @@ body {
 
 
 .chat-history {
-	height: 538px;
+	height: 508px;
 	padding-top: 20px;
 	padding-bottom: 20px;
 	padding-right: 40px;
@@ -163,7 +167,7 @@ body {
 	text-align: right;
 }
 
-.chat-history-message__avatar {
+.ch-message__avatar {
 	display: inline-block;
 	margin-right: 5px;
 	width: 30px;
@@ -171,9 +175,13 @@ body {
 	vertical-align: bottom;
 }
 
-.chat-history-message__text {
+.ch-message__content {
+	display: inline-block;
+	padding-bottom: 10px;
+}
+
+.ch-msg-cnt__text {
 	padding: 10px;
-	margin-bottom: 10px;
 	display: inline-block;
 	max-width: 300px;
 	font: 14px robotoregular;
@@ -183,14 +191,32 @@ body {
 	vertical-align: bottom;
 }
 
-.chat-history__message_left .chat-history-message__text {
+.chat-history__message_left .ch-msg-cnt__text {
 	border-radius: 20px 20px 20px 0;
 	background-color: rgba(0, 0, 0, 0.20);
 }
 
-.chat-history__message_right .chat-history-message__text {
+.chat-history__message_right .ch-msg-cnt__text {
 	border-radius: 20px 20px 0 20px;
 	background-color: rgba(0, 0, 0, 0.10);
+}
+
+.ch-msg-cnt__attachment {
+	display: block;
+	width: 220px;
+	height: auto;
+	margin: 2px auto;
+}
+
+.ch-msg-cnt-attachment__picture {
+	width: 100%;
+	height: 100%;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.files__item_chat {
+	border-radius: 5px;
 }
 
 
@@ -199,6 +225,35 @@ body {
 	padding-top: 10px;
 	height: 50px;
 	border-top: 1px solid rgba(0, 0, 0, 0.10);
+}
+
+.msg-box-attachments__item {
+	display: inline-block;
+	width: auto;
+	height: 16px;
+	border-radius: 10px;
+	margin: 3px 3px 3px 0;	
+	background-color: #cccccc;
+	padding: 0 4px;
+}
+
+.msg-box-attachments-item__text {
+	display: inline-block;
+	font: 11px robotoregular; 
+	color: rgba(0, 0, 0, 0.4);
+	vertical-align: top;
+	white-space: nowrap;
+  overflow: hidden;
+  max-width: 150px;
+}
+
+.msg-box-attachments-item__delete-icon {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background-image: url(../img/icons.png);
+	background-position: -16px 0;
+	cursor: pointer;
 }
 
 .message-box__clip-button {
@@ -233,12 +288,13 @@ body {
 .message-box__photo-button {
 	display: inline-block;
 	vertical-align: top;
-	vertical-align:middle;
+	vertical-align: middle;
 	width: 24px;
 	height: 24px;	
 	margin-right: 15px;
 	background-image: url(../img/icons.png);
 	background-position: 0px -184px;
+	cursor: pointer;
 }
 
 .message-box__input {
@@ -247,9 +303,14 @@ body {
 	margin-right: 5px;
 	width: 530px;
 	height: 32px;
-	border-radius: 5px;
+	border: none;
 	font: 14px robotoregular; 
 	color: rgba(0, 0, 0, 0.8);
+	border-radius: 10px;
+}
+
+.message-box__input:focus {
+	outline: none;
 }
 
 .message-box__send-message-button {
@@ -338,16 +399,22 @@ body {
 
 
 
-.shared-files__item {
-	padding: 5px 15px;
+.files__item {
+	text-align: left;
 	cursor: pointer;
+	word-wrap:break-word;
 }
 
-.shared-files__item:hover {
+.files__item_shared {
+	padding: 5px 15px;
+}
+
+.files__item:hover {
 	background-color: #cccccc;
+	transition: background-color 0.7s ease-in-out;
 }
 
-.s-files-item__icon {
+.files-item__icon {
 	display: inline-block;
 	width: 16px;
 	height: 16px;		
@@ -356,14 +423,14 @@ body {
 	vertical-align: bottom;
 }
 
-.s-files-item__title {
+.files-item__title {
 	color: rgba(0, 0, 0, 0.8); 
 	font: 13px robotoregular;
 	vertical-align: bottom;
 	padding-left: 5px;			
 }
 
-.s-files-item__title:hover {
+.files-item__title:hover {
 	color: rgba(0, 0, 0, 0.8); 
 	text-decoration: none;
 }
@@ -376,11 +443,17 @@ body {
 }
 
 
-.shared-audio__item {
+
+.audio__item {
+	text-align: left;
+	word-wrap:break-word;
+}
+
+.audio__item_shared {
 	padding: 5px 15px;
 }
 
-.s-audio-item__playstate {
+.audio-item__playstate {
 	display: inline-block;
 	width: 16px;
 	height: 16px;
@@ -392,18 +465,18 @@ body {
 	cursor: pointer;
 }
 
-.s-audio-item__playstate_play {
+.audio-item__playstate_play {
 	background-image: url(../img/icons.png);
 	background-position: -16px -32px;
 }
 
-.s-audio-item__title {
+.audio-item__title {
 	color: rgba(0, 0, 0, 0.8);	
 	font: 13px robotoregular;
 	vertical-align: middle;
 }
 
-.s-audio-item__title:hover {
+.audio-item__title:hover {
 	color: rgba(0, 0, 0, 0.8); 
 	text-decoration: none;
 }
@@ -422,7 +495,7 @@ body {
 	font-size: 0px;
 }
 
-.shared-photos__item {
+.photos__item_shared {
 	position: relative;
 	display: inline-block;
 	vertical-align: top;
@@ -433,12 +506,12 @@ body {
 	cursor: pointer;
 }
 
-.s-photos-item__pic {
+.photos-item__pic {
 	width: 100%;
 	height: 100%;
 }
 
-.s-photos-item__overlay {
+.photos-item__overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -449,7 +522,7 @@ body {
   background: rgba(255, 255, 255, 0.15);             
 }
 
-.shared-photos__item:hover .s-photos-item__overlay {
+.photos__item_shared:hover .photos-item__overlay {
   display: block;
 }
 
@@ -474,7 +547,7 @@ body {
 	border-radius: 10px;
 	padding: 5px 0;
 	background-clip: padding-box;
-	background-color: #fff;
+	background-color: #ffffff;
 	border: 1px solid rgba(0, 0, 0, 0.15);
 	border-radius: 3px;
 	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
