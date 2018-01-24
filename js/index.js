@@ -1,629 +1,57 @@
 'use strict';
 
-const contacts = `{"contacts":
-										[	
-											{"user_id":"13071",
-											"user_name":"Andrey Samarin",
-											"avatar_pic_link":"./img/avatar-pic1.jpg",
-											"status":"Online",
-											"last_message":
-												{"snippet":"sit amet veniam, quis nostrud",
-												"message_sender_id":"13071",
-												"timestamp_precise":"1515575746535"
-												}
-											},		
-											{"user_id":"13072",
-											"user_name":"Aleksey Shevelev",
-											"avatar_pic_link":"./img/avatar-pic2.jpg",
-											"status":"Online",
-											"last_message":
-												{"snippet":"aliquip ex ea commodo ",
-												"message_sender_id":"10001",
-												"timestamp_precise":"1515575746535"
-												}
-											},
-											{"user_id":"13073",
-											"user_name":"Boris Klimov",
-											"avatar_pic_link":"./img/avatar-pic3.jpg",
-											"status":"Active 1h ago",
-											"last_message":
-												{"snippet":"consectetur adipiscing elit",
-												"message_sender_id":"13073",
-												"timestamp_precise":"1515575746535"
-												}
-											},
-											{"user_id":"13074",
-											"user_name":"Dmitry Kulikov",
-											"avatar_pic_link":"./img/avatar-pic4.jpg",
-											"status":"Active 4h ago",
-											"last_message":
-												{"snippet":"exercitation ullamco laboris",
-												"message_sender_id":"13074",
-												"timestamp_precise":"1515575746535"
-												}
-											},
-											{"user_id":"13075",
-											"user_name":"Gennady Yousupov",
-											"avatar_pic_link":"./img/avatar-pic5.jpg",
-											"status":"Online",
-											"last_message":
-												{"snippet":"veniam, quis nostrud ",
-												"message_sender_id":"13075",
-												"timestamp_precise":"1515575746535"
-												}
-											},
-											{"user_id":"13076",
-											"user_name":"Vasily Esmanov",
-											"status":"Active 2h ago",
-											"avatar_pic_link":"./img/avatar-pic6.jpg",
-											"last_message":
-												{"snippet":"do eiusmod tempor incididunt",
-												"message_sender_id":"13076",
-												"timestamp_precise":"1515575746535"
-												}
-											}
-										]
-									}`;
+
+function loadContacts() {
+	return new Promise((done, fail) => {
+		const xhr = new XMLHttpRequest();
+		let url = './contacts.json';
+		// if (location.hostname !== 'localhost') {
+		// 	url = 'http://university.netology.ru/u/maslov/dp-hj/contacts.json';
+		// }
+		xhr.open('GET', url);
+		xhr.addEventListener('error', e => fail(xhr));
+		xhr.addEventListener('load', e => {
+			if (xhr.status !== 200) {
+				fail(xhr);
+			}
+			done(xhr.responseText);
+		});
+		xhr.send();
+	});
+}
+
+function loadMessages() {
+	return new Promise((done, fail) => {
+		const xhr = new XMLHttpRequest();
+		let url = './messages.json';
+		// if (location.hostname !== 'localhost') {
+		// 	url = 'http://university.netology.ru/u/maslov/dp-hj/messages.json';
+		// }
+		xhr.open('GET', url);
+		xhr.addEventListener('error', e => fail(xhr));
+		xhr.addEventListener('load', e => {
+			if (xhr.status !== 200) {
+				fail(xhr);
+			}
+			done(xhr.responseText);
+		});
+		xhr.send();
+	});
+}
 
 
+var messagesJSONLocal;
 
-const messages = `{"users":
-										[
-											{"other_user_id":"13071",	
-											"user_name":"Andrey Samarin",											
-											"messages":
-												[
-													{"message_sender_id":"13071",
-													"timestamp_precise":"1515516705866",
-													"message_text":"orem ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi utiv",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"veniam, quis nostrud exercitation ullamco laboris nisi ut",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"13071",
-													"timestamp_precise":"1515516705866",
-													"message_text":"nostrud exercitation ullamco",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"sit amet veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris",			
-													"attachments":[]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"file",
-															"file_name":"Requiem for a Dream, Hubert Selby, Jr..pdf",
-															"link":"./files/Requiem for a Dream, Hubert Selby, Jr..rtf"
-															}
-														]
-													},
-													{"message_sender_id":"13071",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"file",
-															"file_name":"The Green Mile, Stephen King.pdf",
-															"link":"./files/The Green Mile, Stephen King.rtf"
-															}
-														]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"audio",
-															"file_name":"And Out Of Love - In Armin van Buuren feat Sharon den Adel",
-															"link":"./files/And Out Of Love - In Armin van Buuren feat Sharon den Adel.mp3"
-															}
-														]
-													},
-													{"message_sender_id":"13071",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"audio",
-															"file_name":"Full Focus - Armin van Buuren",
-															"link":"./files/Full Focus - Armin van Buuren.mp3"
-															}
-														]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic1",
-															"link":"./img/s-photos-pic1.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"13071",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic2",
-															"link":"./img/s-photos-pic2.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic3",
-															"link":"./img/s-photos-pic3.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"13071",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic4",
-															"link":"./img/s-photos-pic4.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic5",
-															"link":"./img/s-photos-pic5.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"13071",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic6",
-															"link":"./img/s-photos-pic6.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic7",
-															"link":"./img/s-photos-pic7.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"13071",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic8",
-															"link":"./img/s-photos-pic8.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic9",
-															"link":"./img/s-photos-pic9.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													}								
-												]
-											},
-											{"other_user_id":"13072",	
-											"user_name":"Aleksey Shevelev",											
-											"messages":
-												[
-													{"message_sender_id":"13072",
-													"timestamp_precise":"1515516705866",
-													"message_text":"orem ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi utiv",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"quis nostrud exercitation ullamco laboris nisi",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"13072",
-													"timestamp_precise":"1515516705866",
-													"message_text":"exercitation ullamco laboris nisi ut veniam",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"veniam, quis nostrud exercitation ullamco laboris nisi ut",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"13072",
-													"timestamp_precise":"1515516705866",
-													"message_text":"nostrud exercitation ullamco",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"sit amet veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris",			
-													"attachments":[]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"file",
-															"file_name":"Requiem for a Dream, Hubert Selby, Jr..pdf",
-															"link":"./files/Requiem for a Dream, Hubert Selby, Jr..rtf"
-															}
-														]
-													},
-													{"message_sender_id":"13072",
-													"timestamp_precise":"1515516705866",
-													"message_text":"fhdfghdjdg",			
-													"attachments":
-														[
-															{"type":"file",
-															"file_name":"The Green Mile, Stephen King.pdf",
-															"link":"./files/The Green Mile, Stephen King.rtf"
-															}
-														]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"sdfgsfsafgfdhdfgjdhjdhjdhj",			
-													"attachments":
-														[
-															{"type":"audio",
-															"file_name":"And Out Of Love - In Armin van Buuren feat Sharon den Adel",
-															"link":"./files/And Out Of Love - In Armin van Buuren feat Sharon den Adel.mp3"
-															}
-														]
-													},
-													{"message_sender_id":"13072",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"audio",
-															"file_name":"Full Focus - Armin van Buuren",
-															"link":"./files/Full Focus - Armin van Buuren.mp3"
-															}
-														]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic1",
-															"link":"./img/s-photos-pic1.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"13072",
-													"timestamp_precise":"1515516705866",
-													"message_text":"bndgfhjfghkglgk",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic2",
-															"link":"./img/s-photos-pic2.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic3",
-															"link":"./img/s-photos-pic3.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"13072",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic4",
-															"link":"./img/s-photos-pic4.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic5",
-															"link":"./img/s-photos-pic5.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"13072",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic6",
-															"link":"./img/s-photos-pic6.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic7",
-															"link":"./img/s-photos-pic7.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"13072",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic8",
-															"link":"./img/s-photos-pic8.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic9",
-															"link":"./img/s-photos-pic9.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"13072",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic10",
-															"link":"./img/s-photos-pic10.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic11",
-															"link":"./img/s-photos-pic11.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													},
-													{"message_sender_id":"13072",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"image",
-															"file_name":"s-photos-pic12",
-															"link":"./img/s-photos-pic12.jpg",
-															"original_dimensions":{"x":600,"y":600}
-															}
-														]
-													}
-												]
-											},
-											{"other_user_id":"13073",	
-											"user_name":"Boris Klimov",											
-											"messages":
-												[
-													{"message_sender_id":"13073",
-													"timestamp_precise":"1515516705866",
-													"message_text":"orem ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi utiv",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"quis nostrud exercitation ullamco laboris nisi",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"13073",
-													"timestamp_precise":"1515516705866",
-													"message_text":"exercitation ullamco laboris nisi ut veniam",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"veniam, quis nostrud exercitation ullamco laboris nisi ut",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"13073",
-													"timestamp_precise":"1515516705866",
-													"message_text":"nostrud exercitation ullamco",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"sit amet veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris",			
-													"attachments":[]
-													}
-												]
-											},
-											{"other_user_id":"13074",	
-											"user_name":"Dmitry Kulikov",											
-											"messages":
-												[
-													{"message_sender_id":"13074",
-													"timestamp_precise":"1515516705866",
-													"message_text":"orem ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi utiv",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"quis nostrud exercitation ullamco laboris nisi",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"13074",
-													"timestamp_precise":"1515516705866",
-													"message_text":"exercitation ullamco laboris nisi ut veniam",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"veniam, quis nostrud exercitation ullamco laboris nisi ut",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"13074",
-													"timestamp_precise":"1515516705866",
-													"message_text":"nostrud exercitation ullamco",			
-													"attachments":[]
-													}
-												]
-											},
-											{"other_user_id":"13075",	
-											"user_name":"Gennady Yousupov",											
-											"messages":
-												[
-													{"message_sender_id":"13075",
-													"timestamp_precise":"1515516705866",
-													"message_text":"orem ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi utiv",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"quis nostrud exercitation ullamco laboris nisi",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"13075",
-													"timestamp_precise":"1515516705866",
-													"message_text":"exercitation ullamco laboris nisi ut veniam",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"veniam, quis nostrud exercitation ullamco laboris nisi ut",			
-													"attachments":[]
-													}
-												]
-											},
-											{"other_user_id":"13076",	
-											"user_name":"Vasily Esmanov",											
-											"messages":
-												[
-													{"message_sender_id":"13076",
-													"timestamp_precise":"1515516705866",
-													"message_text":"orem ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris nisi utiv",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"quis nostrud exercitation ullamco laboris nisi",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"13076",
-													"timestamp_precise":"1515516705866",
-													"message_text":"exercitation ullamco laboris nisi ut veniam",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"veniam, quis nostrud exercitation ullamco laboris nisi ut",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"13076",
-													"timestamp_precise":"1515516705866",
-													"message_text":"nostrud exercitation ullamco",			
-													"attachments":[]
-													},		
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"sit amet veniam, quis nostrud exercitation ullamco laboris nisi ut veniam, quis nostrud exercitation ullamco laboris",			
-													"attachments":[]
-													},
-													{"message_sender_id":"10001",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"file",
-															"file_name":"Requiem for a Dream, Hubert Selby, Jr..pdf",
-															"link":"./files/Requiem for a Dream, Hubert Selby, Jr..rtf"
-															}
-														]
-													},
-													{"message_sender_id":"13076",
-													"timestamp_precise":"1515516705866",
-													"message_text":"",			
-													"attachments":
-														[
-															{"type":"audio",
-															"file_name":"Full Focus - Armin van Buuren",
-															"link":"./files/Full Focus - Armin van Buuren.mp3"
-															}
-														]
-													}
-												]
-											}
-										]
-									}`;
+
+loadContacts()
+	.then((result) => {
+		const contactsJSON = JSON.parse(result);
+		return createContactsSection(contactsJSON);
+	})
+	.then((contactsItem, contactsJSON) => {
+		return createChatHistorySection(document.querySelector('.contacts__item'), contactsItem, contactsJSON);		
+	});
+
 
 
 
@@ -645,12 +73,8 @@ const sidePanelPhotos = document.querySelector('.shared__content_photos');
 
 const player = document.querySelector('.audioplayer');
 
-const contactsJSON = JSON.parse(contacts);
 
-const messagesJSON = JSON.parse(messages); 
-
-
-function createContactsSection() {
+function createContactsSection(contactsJSON) {
 
 	const fragment = contactsJSON.contacts.reduce((memo, el) => {   
 		const contactsItem = document.createElement('div');
@@ -686,18 +110,18 @@ function createContactsSection() {
 		text.appendChild(textMessage);     
 		memo.appendChild(contactsItem);
 		return memo;
-		}, document.createDocumentFragment());    
-	return fragment;  
+		}, document.createDocumentFragment());   
+
+	contactSection.appendChild(fragment); 
+
+	const contactItems = document.querySelectorAll('.contacts__item');
+
+	Array.from(contactItems).forEach(el => {
+		el.addEventListener('click', ev => createChatHistorySection(ev.currentTarget, contactItems, contactsJSON));
+	}); 
+
+	return contactItems, contactsJSON;  
 }
-
-
-contactSection.appendChild(createContactsSection());
-
-const contactItems = document.querySelectorAll('.contacts__item');
-
-Array.from(contactItems).forEach(el => {
-	el.addEventListener('click', ev => createChatHistorySection(ev.currentTarget));
-}); 
 
 
 function addEventListenerAudio(item) {
@@ -850,8 +274,8 @@ function addElementText(parentElement, text) {
 const sidePanel = document.querySelector('.side-panel');	
 const userInfoSection = document.querySelector('.user-info-section');		
 
-function createChatHistorySection(otherUser) {
-	
+function createChatHistorySection(otherUser, contactItems, contactsJSON) {
+
 	Array.from(contactItems).forEach(el => {el.classList.remove('contacts__item_active')});
 	otherUser.classList.add('contacts__item_active');
 
@@ -861,6 +285,21 @@ function createChatHistorySection(otherUser) {
 	sidePanelPhotos.textContent = '';
 	player.controls = false;
 	clearAttacments();
+
+
+	loadMessages()
+		.then((result) => {
+			messagesJSONLocal = JSON.parse(result);
+			const messagesJSON = JSON.parse(result);
+			createChatHistory(otherUser, messagesJSON);
+			addUserInfoMenuItemListener(messagesJSON, contactsJSON);
+		});
+
+	// return otherUser;				
+}
+
+
+function createChatHistory(otherUser, messagesJSON) {
 
 	const user = messagesJSON.users.find(el => {return el.other_user_id == otherUser.dataset.userId;});
 
@@ -887,8 +326,7 @@ function createChatHistorySection(otherUser) {
 	name.textContent = otherUser.querySelector('.contact-item-text__name').textContent;
 
 	const status = userInfoSection.querySelector('.user-info-section__status');
-	status.textContent = otherUser.querySelector('.contact-item-text__name').dataset.status;
-		
+	status.textContent = otherUser.querySelector('.contact-item-text__name').dataset.status;				
 }
 
 
@@ -900,7 +338,7 @@ function clearAttacments() {
 
 
 
-createChatHistorySection(document.querySelector('.contacts__item'));
+
 
 function addAttacmentsItem(fileType, fileName, link) {
 	
@@ -1043,7 +481,7 @@ function sendMessage(event) {
 
 	const audioItemsChat = document.querySelectorAll('.audio__item_chat .audio-item__playstate');
 
-	if (audioItemsChat) {
+	if (audioItemsChat.length > 0) {
 		index = Number(audioItemsChat[audioItemsChat.length - 1].name);
 		index++;
 	} 
@@ -1063,7 +501,9 @@ const app = document.querySelector('.photo-box__app');
 const msgBoxPhotoBtn = document.querySelector('.message-box__photo-button');
 const videoStreams = [];
 
-msgBoxPhotoBtn.addEventListener('click', event => {
+msgBoxPhotoBtn.addEventListener('click', clickPhotoBtn);
+
+function clickPhotoBtn(event) {
 	event.preventDefault();
 	photoBox.classList.add('photo-box_show');
 
@@ -1086,7 +526,9 @@ msgBoxPhotoBtn.addEventListener('click', event => {
 		closeBtn.addEventListener('click', closePhotoBox);
 
 		});
-});
+
+	msgBoxPhotoBtn.removeEventListener('click', clickPhotoBtn);
+}
 
 const takePhotoBtn = document.querySelector('.photo-box-app__controls'); 
 takePhotoBtn.addEventListener('click', takePicture);
@@ -1165,39 +607,41 @@ function closePhotoBox() {
 	Array.from(document.querySelectorAll('.photo-box__closeBtn')).forEach((el) => {
 		photoBox.removeChild(el);
 	});
+	msgBoxPhotoBtn.addEventListener('click', clickPhotoBtn);
 }	  
 
 
+function addUserInfoMenuItemListener(messagesJSON, contactsJSON) {
+	const clearHistoryMenuItem = document.querySelector('.options-menu__item_clear-history');
 
-const clearHistoryMenuItem = document.querySelector('.options-menu__item_clear-history');
+	clearHistoryMenuItem.addEventListener('click', () => {
+		chatHistorySection.textContent = '';
+		sidePanelFiles.textContent = '';
+		sidePanelAudio.textContent = '';
+		sidePanelPhotos.textContent = '';
 
-clearHistoryMenuItem.addEventListener('click', () => {
-	chatHistorySection.textContent = '';
-	sidePanelFiles.textContent = '';
-	sidePanelAudio.textContent = '';
-	sidePanelPhotos.textContent = '';
+		const currentUser = document.querySelector('.contacts__item_active').dataset.userId;
 
-	const currentUser = document.querySelector('.contacts__item_active').dataset.userId;
+		const userMessages = messagesJSONLocal.users.findIndex(el => {
+			return el.other_user_id == currentUser;
+		});
 
-	const userMessages = messagesJSON.users.findIndex(el => {
-		return el.other_user_id == currentUser;
+		console.log(contactsJSON);
+		messagesJSON.users.splice(userMessages, 1);
+		contactsJSON.contacts.forEach(el => {
+			if (el.user_id == currentUser) {
+				document.querySelector('.contacts__item_active  .contact-item-text__message').textContent = '';
+				el.last_message = {snippet:'', message_sender_id:'', timestamp_precise:''}
+				return;
+			}
+		});	
+
+		player.controls = false;
+
+		optionsMenu.classList.remove('options-menu_show');	
 	});
-
-	console.log(currentUser, userMessages);
-
-	messagesJSON.users.splice(userMessages, 1);
-	contactsJSON.contacts.forEach(el => {
-		if (el.user_id == currentUser) {
-			document.querySelector('.contacts__item_active  .contact-item-text__message').textContent = '';
-			el.last_message = {snippet:'', message_sender_id:'', timestamp_precise:''}
-			return;
-		}
-	});	
-
-	player.controls = false;
-
-	optionsMenu.classList.remove('options-menu_show');	
-});
+}
+	
 
 const userInfoMenuItem = document.querySelector('.options-menu__item_user-info');
 
