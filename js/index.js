@@ -1180,8 +1180,10 @@ clearHistoryMenuItem.addEventListener('click', () => {
 	const currentUser = document.querySelector('.contacts__item_active').dataset.userId;
 
 	const userMessages = messagesJSON.users.findIndex(el => {
-		return el.other_user_id = currentUser;
+		return el.other_user_id == currentUser;
 	});
+
+	console.log(currentUser, userMessages);
 
 	messagesJSON.users.splice(userMessages, 1);
 	contactsJSON.contacts.forEach(el => {
@@ -1219,7 +1221,7 @@ sharedFilesMenuItem.addEventListener('click', () => {
 
 sharedControlElement.forEach(el => {
 	el.addEventListener('click', ev => {
-		const element = ev.target.parentElement.parentElement.querySelector('.shared__content');
+	  const element = ev.target.parentElement.parentElement.querySelector('.shared__content');
 		element.classList.toggle('shared__content_hide');
 	});
 });
