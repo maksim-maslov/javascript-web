@@ -1,97 +1,97 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-	<meta charset="UTF-8">
-	<title>Messenger</title>
-	<link rel="stylesheet" href="css/bootstrap.css">
-	<link rel="stylesheet" href="css/fonts.css">
-	<link rel="stylesheet" href="css/main.css">
+  <meta charset="UTF-8">
+  <title>Messenger</title>
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-	<div class="row">
-		<div class="col-lg-3 contacts scroll">
-		</div>		  
-		<div class="col-lg-9 right-section">
-			<div class="col-lg-12 top-section">
-				<div class="top-section__text">
-					<div class="top-section-text__name"></div>
-					<div class="top-section-text__status"></div>
-				</div>
-				<div class="top-section__control-element"></div>			  	
-			</div>
-			<div class="col-lg-12 middle-section">
-				<div class="col-lg-8 chat-section">
-					<div class="col-lg-12 chat-history scroll">
-					</div>
-					<div class="col-lg-12 send-message-section">		
-						<form class="message-box" action="" method="POST">
-							<div class="message-box__attachments">
-							</div>
-							<div class="message-box__send-block">
-								<div class="message-box__clip-button">
-									<label class="upload-button" for="uploadbtn" ></label>
-									<input type="file" name="upload" id="uploadbtn">
-								</div>
-								<a class="message-box__photo-button" href="#"></a>									  			
-								<input class="message-box__input" type="text" placeholder="Type a message…">
-								<div class="message-box__send-message-button">
-									<label class="submit-button submit-button_disabled" for="submitbtn"></label>
-									<button id="submitbtn" type="submit" disabled></button>								
-								</div>
-							</div>			  						
-						</form>			  		
-					</div>
-				</div>
-				<div class="col-lg-4 user-info-section">
-					<div class="user-info-section__avatar">
-						<img class="avatar__pic" src="img/avatar-pic1.jpg">	  			
-					</div>			  		
-					<div class="user-info-section__name"></div>
-					<div class="user-info-section__status"></div>
-				</div>
-				<div class="col-lg-4 side-panel scroll">
-					<div class="col-lg-12 side-panel__shared side-panel__shared_files">
-						<div class="shared__head">
-							<div class="shared-head__text">Shared Files</div>
-							<div class="shared-head__control-element"></div>
-						</div>
-						<div class="shared__content shared__content_files"></div>
-					</div>
-					<div class="col-lg-12 side-panel__shared side-panel__shared_audio">
-						<div class="shared__head">
-							<div class="shared-head__text">Shared Audio</div>
-							<div class="shared-head__control-element"></div>
-						</div>
-						<div class="shared__content shared__content_audio"></div>
-					</div>
-					<div class="col-lg-12 side-panel__shared side-panel__shared_photos">
-						<div class="shared__head">
-							<div class="shared-head__text">Shared Photos</div>
-							<div class="shared-head__control-element"></div>
-						</div>
-						<div class="shared__content shared__content_photos"></div>
-					</div>
-				</div>
-			</div>
-		</div>		
-	</div>
-	<audio class="audioplayer" src=""></audio>
-		<div class="options-menu">
-			<a class="options-menu__item options-menu__item_user-info">User Info</a>
-			<a class="options-menu__item options-menu__item_shared-files">Shared Files</a>
-			<a class="options-menu__item options-menu__item_clear-history">Clear History</a>
-		</div>
-		<div class="photo-box">
-			<div class="photo-box__app">
-				<div class="photo-box-app__controls">
-					<button id="take-photo" title="Сделать снимок"><i class="material-icons">photo</i></button>		    	
-				</div>
-			</div>
-		</div>
-		<div class="image-view-box">			
-			<img class="image-view-box__picture" src="">
-			<div class="image-view-box__closeBtn"></div>
-		</div>
-	<script src="js/index.js"></script>
+  <div class="row">
+    <div class="col-lg-3 contacts scroll">
+    </div>      
+    <div class="col-lg-9 right-section">
+      <div class="col-lg-12 top-section">
+        <div class="top-section__text">
+          <div class="top-section-text__name"></div>
+          <div class="top-section-text__status"></div>
+        </div>
+        <div class="top-section__control-element"></div>          
+      </div>
+      <div class="col-lg-12 middle-section">
+        <div class="col-lg-8 chat-section">
+          <div class="col-lg-12 chat-history scroll">
+          </div>
+          <div class="col-lg-12 send-message-section">    
+            <form class="message-box" action="" method="POST">
+              <div class="message-box__attachments">
+              </div>
+              <div class="message-box__send-block">
+                <div class="message-box__clip-button">
+                  <label class="upload-button" for="uploadbtn" ></label>
+                  <input type="file" name="upload" id="uploadbtn">
+                </div>
+                <a class="message-box__photo-button" href="#"></a>                          
+                <input class="message-box__input" type="text" placeholder="Type a message…">
+                <div class="message-box__send-message-button">
+                  <label class="submit-button submit-button_disabled" for="submitbtn"></label>
+                  <button id="submitbtn" type="submit" disabled></button>                
+                </div>
+              </div>                    
+            </form>            
+          </div>
+        </div>
+        <div class="col-lg-4 user-info-section">
+          <div class="user-info-section__avatar">
+            <img class="avatar__pic" src="img/avatar-pic1.jpg">          
+          </div>            
+          <div class="user-info-section__name"></div>
+          <div class="user-info-section__status"></div>
+        </div>
+        <div class="col-lg-4 side-panel scroll">
+          <div class="col-lg-12 side-panel__shared side-panel__shared_files">
+            <div class="shared__head">
+              <div class="shared-head__text">Shared Files</div>
+              <div class="shared-head__control-element"></div>
+            </div>
+            <div class="shared__content shared__content_files"></div>
+          </div>
+          <div class="col-lg-12 side-panel__shared side-panel__shared_audio">
+            <div class="shared__head">
+              <div class="shared-head__text">Shared Audio</div>
+              <div class="shared-head__control-element"></div>
+            </div>
+            <div class="shared__content shared__content_audio"></div>
+          </div>
+          <div class="col-lg-12 side-panel__shared side-panel__shared_photos">
+            <div class="shared__head">
+              <div class="shared-head__text">Shared Photos</div>
+              <div class="shared-head__control-element"></div>
+            </div>
+            <div class="shared__content shared__content_photos"></div>
+          </div>
+        </div>
+      </div>
+    </div>    
+  </div>
+  <audio class="audioplayer" src=""></audio>
+    <div class="options-menu">
+      <a class="options-menu__item options-menu__item_user-info">User Info</a>
+      <a class="options-menu__item options-menu__item_shared-files">Shared Files</a>
+      <a class="options-menu__item options-menu__item_clear-history">Clear History</a>
+    </div>
+    <div class="photo-box">
+      <div class="photo-box__app">
+        <div class="photo-box-app__controls">
+          <button id="take-photo" title="Сделать снимок"><i class="material-icons">photo</i></button>          
+        </div>
+      </div>
+    </div>
+    <div class="image-view-box">      
+      <img class="image-view-box__picture" src="">
+      <div class="image-view-box__closeBtn"></div>
+    </div>
+  <script src="js/index.js"></script>
 </body>
 </html>
