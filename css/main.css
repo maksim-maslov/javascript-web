@@ -638,7 +638,7 @@ body {
 	right: 0;
 	width: 400px;
 	height: 303px;
-	left:50%; 
+	left: 50%; 
 	margin-left: -200px;
 	padding: auto 0;
 	background-clip: padding-box;
@@ -739,4 +739,41 @@ body {
 	display: none;
 }
 
+.image-view-box {
+	position: absolute;
+	top: 30px;
+	left: 50%;
+	margin-left: -400px;
+	width: 800px;
+	height: 550px;
+	padding: 5px;
+	background-clip: padding-box;
+	background-color: #ffffff;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	border-radius: 3px;
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+	opacity: 1;
+	visibility: hidden;
+	text-align: center;
+}
 
+.image-view-box__picture {
+	position: relative;
+	height: 540px;
+	margin: 0 auto;
+}
+
+.image-view-box__closeBtn {
+	display: block;
+	width: 24px;
+	height: 24px;
+	background-image: url(../img/icons.png);
+	background-position: 0 -312px;
+	vertical-align: top;
+	cursor: pointer;
+	opacity: 0.8;
+	margin-top: -535px;
+	margin-left: 758px; 
+	position: relative;
+	z-index: 5;
+}

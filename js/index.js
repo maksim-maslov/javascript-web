@@ -49,7 +49,7 @@ loadContacts()
 		return createContactsSection(contactsJSON);
 	})
 	.then((contactsItem, contactsJSON) => {
-		return createChatHistorySection(document.querySelector('.contacts__item'), contactsItem, contactsJSON);		
+		createChatHistorySection(document.querySelector('.contacts__item'), contactsItem, contactsJSON);		
 	});
 
 
@@ -203,11 +203,20 @@ function createElementAudio(link, fileName) {
 	return attachmentItem;
 }	
 
+const imageViewBox = document.querySelector('.image-view-box__picture');
+
+document.querySelector('.image-view-box__closeBtn').addEventListener('click', (ev) => {
+	ev.currentTarget.parentElement.style.visibility = 'hidden';
+});
 
 function createElementImageChat(parentElement, link) {
 	const attachmentItem = document.createElement('img');			 
 	attachmentItem.className = 'ch-msg-cnt-attachment__picture'; 
 	attachmentItem.src = link;
+	attachmentItem.addEventListener('click', ev => {
+		imageViewBox.parentElement.style.visibility = 'visible';
+		imageViewBox.src = ev.currentTarget.src;
+	});
 	parentElement.appendChild(attachmentItem);
 }
 
@@ -231,7 +240,13 @@ function createElementImageSidePanelPhotos(link) {
 
 	const sidePanelPhotoOverlay = document.createElement('div');			 
 	sidePanelPhotoOverlay.className = 'photos-item__overlay'; 
-	sidePanelPhotoLink.appendChild(sidePanelPhotoOverlay);
+	sidePanelPhotoLink.appendChild(sidePanelPhotoOverlay);	
+
+	sidePanelPhotoOverlay.addEventListener('click', ev => {
+		ev.preventDefault();
+		imageViewBox.parentElement.style.visibility = 'visible';
+		imageViewBox.src = ev.currentTarget.previousElementSibling.src;
+	});
 }
 
 function addElementFile(parentElement, link, fileName) {
@@ -294,8 +309,7 @@ function createChatHistorySection(otherUser, contactItems, contactsJSON) {
 			createChatHistory(otherUser, messagesJSON);
 			addUserInfoMenuItemListener(messagesJSON, contactsJSON);
 		});
-
-	// return otherUser;				
+				
 }
 
 
@@ -453,7 +467,7 @@ function addMessage(index, otherUserId, messageSender, avatarPicture, messageTex
 		const attachment = document.createElement('div');
 		attachment.className = 'ch-msg-cnt__attachment';
 		messageContent.appendChild(attachment);
-		attachments.forEach(element => {	  	  
+		attachments.forEach(element => { 
 
 			if (element.type.search(/audio/) != -1) {
 				addElementAudio(attachment, element.link, element.file_name, index);	    		   		
@@ -644,7 +658,6 @@ function addUserInfoMenuItemListener(messagesJSON, contactsJSON) {
 	
 
 const userInfoMenuItem = document.querySelector('.options-menu__item_user-info');
-
 
 userInfoMenuItem.addEventListener('click', () => {
 	sidePanel.style.display = 'none';
