@@ -215,7 +215,7 @@ body {
   margin: 2px auto;
 }
 
-.ch-msg-cnt-attachment__picture {
+.photo__item_chat {
   width: 100%;
   height: 100%;
   border-radius: 5px;
@@ -565,6 +565,7 @@ body {
   overflow: hidden;
 }
 
+
 .photos-item__pic {
   height: 100%;
 }
@@ -636,18 +637,17 @@ body {
   top: 100px;
   left: 0;
   right: 0;
-  width: 400px;
-  height: 303px;
+  width: 394px;
+  height: 297px;
   left: 50%; 
   margin-left: -200px;
-  padding: auto 0;
   background-clip: padding-box;
   background-color: #111111;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 3px;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
   visibility: hidden;
-  padding: 5px;
+  padding: 2px;
 }
 
 .photo-box_show {
@@ -708,7 +708,8 @@ body {
   cursor: pointer;
   opacity: 0.8;
   margin-top: 10px;
-  margin-left: 355px; 
+  margin-left: auto; 
+  margin-right: 5px;
   position: relative;
   z-index: 5;
 }
@@ -732,7 +733,7 @@ body {
   line-height: 0;
   opacity: 0.7;
   outline: none;
-  -webkit-tap-highlight-color: transparent;
+  /*-webkit-tap-highlight-color: transparent;*/
 }
 
 .photo-box__app canvas {
@@ -741,26 +742,20 @@ body {
 
 .image-view-box {
   position: absolute;
-  top: 30px;
-  left: 50%;
-  margin-left: -400px;
-  width: 800px;
-  height: 550px;
-  padding: 5px;
-  background-clip: padding-box;
-  background-color: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 3px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-  opacity: 1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.99);
+  opacity: 0;
   visibility: hidden;
   text-align: center;
 }
 
-.image-view-box__picture {
-  position: relative;
-  height: 540px;
-  margin: 0 auto;
+.image-view-box_show {
+  opacity: 1;
+  transition: opacity 0.7s ease-in-out;
+  visibility: visible;
 }
 
 .image-view-box__closeBtn {
@@ -772,8 +767,45 @@ body {
   vertical-align: top;
   cursor: pointer;
   opacity: 0.8;
-  margin-top: -535px;
-  margin-left: 758px; 
+  margin-top: 15px;
+  margin-left: auto;
+  margin-right: 15px; 
   position: relative;
   z-index: 5;
+}
+
+.image-view-box__top {
+  position: relative;
+  height: 85%;
+  margin: 0 auto;
+  margin-top: -40px;
+  line-height: 544px;
+  padding: 0;
+}
+
+.image-view-box-top__pic {
+  display: inline-block;
+  max-height: 100%;
+  vertical-align: middle;  
+}
+
+.image-view-box__bottom {
+  height: 15%; 
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.photos__item_view-box {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  width: 78px;
+  height: 78px;      
+  margin-right: 2px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.photos__item_view-box:hover .photos-item__overlay {
+  display: block;
 }

@@ -23,7 +23,7 @@
 		{"user_id":"13073",
 		"user_name":"Boris Klimov",
 		"avatar_pic_link":"./img/avatar-pic3.jpg",
-		"status":"Active 1h ago",
+		"status":"Offline",
 		"last_message":
 			{"snippet":"consectetur adipiscing elit",
 			"message_sender_id":"13073",
@@ -33,7 +33,7 @@
 		{"user_id":"13074",
 		"user_name":"Dmitry Kulikov",
 		"avatar_pic_link":"./img/avatar-pic4.jpg",
-		"status":"Active 4h ago",
+		"status":"Offline",
 		"last_message":
 			{"snippet":"exercitation ullamco laboris",
 			"message_sender_id":"13074",
@@ -52,7 +52,7 @@
 		},
 		{"user_id":"13076",
 		"user_name":"Vasily Esmanov",
-		"status":"Active 2h ago",
+		"status":"Offline",
 		"avatar_pic_link":"./img/avatar-pic6.jpg",
 		"last_message":
 			{"snippet":"do eiusmod tempor incididunt",

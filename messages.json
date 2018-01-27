@@ -74,9 +74,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic1",
-            "link":"./img/s-photos-pic1.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image1",
+            "link":"./img/image1.jpg"            
             }
           ]
         },
@@ -86,9 +85,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic2",
-            "link":"./img/s-photos-pic2.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image2",
+            "link":"./img/image2.jpg"            
             }
           ]
         },
@@ -98,9 +96,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic3",
-            "link":"./img/s-photos-pic3.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image3",
+            "link":"./img/image3.jpg"            
             }
           ]
         },
@@ -110,9 +107,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic4",
-            "link":"./img/s-photos-pic4.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image4",
+            "link":"./img/image4.jpg"            
             }
           ]
         },
@@ -122,9 +118,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic5",
-            "link":"./img/s-photos-pic5.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image5",
+            "link":"./img/image5.jpg"            
             }
           ]
         },
@@ -134,9 +129,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic6",
-            "link":"./img/s-photos-pic6.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image6",
+            "link":"./img/image6.jpg"            
             }
           ]
         },
@@ -146,9 +140,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic7",
-            "link":"./img/s-photos-pic7.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image7",
+            "link":"./img/image7.jpg"            
             }
           ]
         },
@@ -158,9 +151,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic8",
-            "link":"./img/s-photos-pic8.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image8",
+            "link":"./img/image8.jpg"            
             }
           ]
         },
@@ -170,9 +162,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic9",
-            "link":"./img/s-photos-pic9.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image9",
+            "link":"./img/image9.jpg"            
             }
           ]
         }                
@@ -262,9 +253,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic1",
-            "link":"./img/s-photos-pic1.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image1",
+            "link":"./img/image1.jpg"            
             }
           ]
         },
@@ -274,9 +264,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic2",
-            "link":"./img/s-photos-pic2.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image2",
+            "link":"./img/image2.jpg"            
             }
           ]
         },
@@ -286,9 +275,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic3",
-            "link":"./img/s-photos-pic3.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image3",
+            "link":"./img/image3.jpg"            
             }
           ]
         },
@@ -298,9 +286,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic4",
-            "link":"./img/s-photos-pic4.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image4",
+            "link":"./img/image4.jpg"            
             }
           ]
         },
@@ -310,9 +297,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic5",
-            "link":"./img/s-photos-pic5.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image5",
+            "link":"./img/image5.jpg"            
             }
           ]
         },
@@ -322,9 +308,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic6",
-            "link":"./img/s-photos-pic6.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image6",
+            "link":"./img/image6.jpg"            
             }
           ]
         },
@@ -334,9 +319,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic7",
-            "link":"./img/s-photos-pic7.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image7",
+            "link":"./img/image7.jpg"
             }
           ]
         },
@@ -346,9 +330,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic8",
-            "link":"./img/s-photos-pic8.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image8",
+            "link":"./img/image8.jpg"
             }
           ]
         },
@@ -358,9 +341,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic9",
-            "link":"./img/s-photos-pic9.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image9",
+            "link":"./img/image9.jpg"
             }
           ]
         },
@@ -370,9 +352,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic10",
-            "link":"./img/s-photos-pic10.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image10",
+            "link":"./img/image10.jpg"
             }
           ]
         },
@@ -382,9 +363,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic11",
-            "link":"./img/s-photos-pic11.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image11",
+            "link":"./img/image11.jpg"
             }
           ]
         },
@@ -394,9 +374,8 @@
         "attachments":
           [
             {"type":"image",
-            "file_name":"s-photos-pic12",
-            "link":"./img/s-photos-pic12.jpg",
-            "original_dimensions":{"x":600,"y":600}
+            "file_name":"image12",
+            "link":"./img/image12.jpg"
             }
           ]
         }
