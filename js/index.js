@@ -51,6 +51,7 @@ function sendData(url, data) {
   return new Promise((done, fail) => {
     const xhr = new XMLHttpRequest();
     xhr.open('PUT', url);
+    xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.addEventListener('error', e => fail(xhr));
     xhr.addEventListener('load', e => {
       if (xhr.status !== 200) {
@@ -64,7 +65,6 @@ function sendData(url, data) {
 
 
 function setConnectionWS(otherUserItemContactList) {
-
 
   connection = new WebSocket('wss://neto-api.herokuapp.com/chat');
 
@@ -84,10 +84,10 @@ function setConnectionWS(otherUserItemContactList) {
     const contactsJSON = JSON.parse(localStorage.contactsJSON);
     contactsJSON.status = 'Offline';    
     const contactsToJSON = JSON.stringify(contactsJSON);
-    localStorage.messagesJSON = contactsToJSON;
+    localStorage.contactsJSON = contactsToJSON;
     
     connection = '';
-  });
+  }); 
 }
 
 
@@ -302,12 +302,12 @@ function takePicture() {
           okBtn.className = 'photo-box-app__okBtn';
           okBtn.addEventListener('click', () => {
             const imageItemsChat = document.querySelectorAll('.photo__item_chat');
-            const filetype = 'image';
+            const filetype = 'image/png';
             const fileName = `image${imageItemsChat.length + 1}.png`;
             const link = src;
 
             canvas.toBlob(function(blob) {
-              addAttacmentsItem(filetype, fileName, src, blob);   
+              addAttacmentsItem(filetype, fileName, src, new File([blob], fileName, {type: filetype}));   
             });
    
             closePhotoBox();              
@@ -501,7 +501,7 @@ function sendMessage(event) {
   
   disableSendBtn(); 
 
-  if (connection != '') {
+  if (connection) {
     connection.send(messageText);
   }  
 }
@@ -595,7 +595,7 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
   const contactsJSON = JSON.parse(localStorage.contactsJSON);  
 
   const message = {};
-  const formData = new FormData();
+  const files = [];
 
   messagesJSON.users.forEach(el => {
     if (el.other_user_id == otherUserId) {
@@ -606,8 +606,8 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
 
       if (attachments.length) {
         const attachmentMessage = attachments.forEach(el => { 
-          formData.append(el.file_name, el.file);
-          message.attachments.push({type: el.type, file_name: el.file_name, link: `./files/${el.file_name}`})
+          files.push(el.file);
+          message.attachments.push({type: el.type, file_name: el.file_name, link: `./files/${el.file_name}`});
         }); 
       } 
 
@@ -638,10 +638,18 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
   localStorage.contactsJSON = JSON.stringify(contactsJSON);
 
   updateDataOnServer();
-  if (formData) {
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", './files/');
-    xhr.send(formData);
+
+  if (files.length > 0) {
+    files.forEach((el) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', './');
+      xhr.addEventListener('load', () => {
+        if (xhr.status === 200){
+          console.log(`Файл ${file.name} сохранен.`);
+        }
+      });
+      xhr.send(el);
+    });      
   } 
 }
 
