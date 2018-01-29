@@ -3,7 +3,7 @@
 		{"user_id":"13071",
 		"user_name":"Andrey Samarin",
 		"avatar_pic_link":"./img/avatar-pic1.jpg",
-		"status":"Online",
+		"status":"Offline",
 		"last_message":
 			{"snippet":"sit amet veniam, quis nostrud",
 			"message_sender_id":"13071",
@@ -13,7 +13,7 @@
 		{"user_id":"13072",
 		"user_name":"Aleksey Shevelev",
 		"avatar_pic_link":"./img/avatar-pic2.jpg",
-		"status":"Online",
+		"status":"Offline",
 		"last_message":
 			{"snippet":"aliquip ex ea commodo ",
 			"message_sender_id":"10001",
@@ -43,7 +43,7 @@
 		{"user_id":"13075",
 		"user_name":"Gennady Yousupov",
 		"avatar_pic_link":"./img/avatar-pic5.jpg",
-		"status":"Online",
+		"status":"Offline",
 		"last_message":
 			{"snippet":"veniam, quis nostrud ",
 			"message_sender_id":"13075",
