@@ -1,7 +1,7 @@
 'use strict';
 
 const senderId = '10001';
-var connection;
+const connections = {};
 const attachments = [];
 const videoStreams = [];
 
@@ -22,9 +22,10 @@ const clipBtn = document.querySelector('#uploadbtn');
 const msgBoxPhotoBtn = document.querySelector('.message-box__photo-button');
 const takePhotoBtn = document.querySelector('.photo-box-app__controls'); 
 
-
 const photoBox = document.querySelector('.photo-box');
 const app = document.querySelector('.photo-box__app');    
+
+const presentation = document.querySelector('.image-view-box');
 
 const optionsMenuItems = document.querySelector('.options-menu');
 
@@ -37,10 +38,11 @@ function loadData(url) {
     xhr.open('GET', url);
     xhr.addEventListener('error', e => fail(xhr));
     xhr.addEventListener('load', e => {
-      if (xhr.status !== 200) {
-        fail(xhr);
+      if (200 <= xhr.status && xhr.status < 300) {
+        done(xhr.responseText);
+        return;        
       }
-      done(xhr.responseText);
+      fail(xhr.statusText);
     });
     xhr.send();
   });
@@ -54,40 +56,58 @@ function sendData(url, data) {
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.addEventListener('error', e => fail(xhr));
     xhr.addEventListener('load', e => {
-      if (xhr.status !== 200) {
-        fail(xhr);
+      if (200 <= xhr.status && xhr.status < 300) {
+        done(url);
+        return;        
       }
-      done(xhr.responseText);
+      fail(xhr.statusText);
     });
     xhr.send(data);
   });
 }
 
 
-function setConnectionWS(otherUserItemContactList) {
+function updateJSONFile(url, file) {
+  sendData(url, file)
+    .then(result => {
+      console.log(`Файл "${result}" обновлен`)
+    })
+    .catch(error => {
+      console.log(`Ошибка  при обновлении файла "${url}": ${error}`);
+      rollbackContentContactItems();
+    });
+}
 
-  connection = new WebSocket('wss://neto-api.herokuapp.com/chat');
 
-  const topSectionTextStatus = document.querySelector('.top-section-text__status');
+function setConnectionWS(activeContact) {
 
-  connection.addEventListener('open', () => {  
-    topSectionTextStatus.textContent = 'Online';
-    otherUserItemContactList.querySelector('.contact-item-text__name').dataset.status = 'Online';
-  });
+  // const userId = activeContact.dataset.userId;
 
-  connection.addEventListener('message', ev => receiveMessage(ev));
+  const userId = '13071';
 
-  connection.addEventListener('close', () => {  
-    topSectionTextStatus.textContent = 'Offline';
-    otherUserItemContactList.querySelector('.contact-item-text__name').dataset.status = 'Offline';
-    
-    const contactsJSON = JSON.parse(localStorage.contactsJSON);
-    contactsJSON.status = 'Offline';    
-    const contactsToJSON = JSON.stringify(contactsJSON);
-    localStorage.contactsJSON = contactsToJSON;
-    
-    connection = '';
-  }); 
+  if (activeContact.dataset.userId == userId && !connections[userId]) {
+    const connection = new WebSocket(`wss://neto-api.herokuapp.com/chat`);
+    connections[userId] = connection;
+
+    connections[userId].addEventListener('open', (ev) => {  
+      updateStatusActiveContact(userId, 'Online');
+    });
+
+    connections[userId].addEventListener('message', ev => receiveMessage(ev, userId));
+
+    connections[userId].addEventListener('close', (ev) => {  
+      updateStatusActiveContact(userId, 'Offline'); 
+      connections[userId] = '';
+    }); 
+  }  
+}
+
+
+function updateStatusActiveContact(userId, status) {
+  const activeContact = document.querySelector(`[data-user-id="${userId}"]`);
+  const topSectionStatus = document.querySelector('.top-section-text__status');
+  topSectionStatus.textContent = status;
+  activeContact.dataset.status = status;
 }
 
 
@@ -113,37 +133,23 @@ function init() {
 
   clipBtn.addEventListener('change', onSelectFiles);  
 
-  takePhotoBtn.addEventListener('click', takePicture);
+  takePhotoBtn.addEventListener('click', takePhoto);
 
   submitBtn.addEventListener('click', sendMessage);
+
+  const presentationCloseBtn = document.querySelector('.image-view-box__closeBtn');
+  presentationCloseBtn.addEventListener('click', ev => {
+    const presentationPhotosList = document.querySelector('.image-view-box__bottom');
+    presentation.removeChild(presentationPhotosList);
+    presentation.classList.remove('image-view-box_show');
+  });
 
   loadData('./contacts.json')
     .then((result) => {
       localStorage.contactsJSON = result;    
       createContactsSection();
-      const otherUserItemContactList = document.querySelector('.contacts__item');
-      createChatHistoryInit(otherUserItemContactList);             
-    });
-}
-
-
-function updateDataOnServer() {
-  const messagesJSON = localStorage.messagesJSON;
-  const contactsJSON = localStorage.contactsJSON;
-  sendData('./messages.json', messagesJSON)
-    .then((result) => {
-      console.log(`result=${result}`);
-    })
-    .catch((error) => {
-      console.log(`error=${error}`);
-    });  
-
-  sendData('./contacts.json', contactsJSON)
-    .then((result) => {
-      console.log(`result=${result}`);
-    })
-    .catch((error) => {
-      console.log(`error=${error}`);
+      const activeContact = document.querySelector('.contacts__item');
+      createChatHistoryInit(activeContact);             
     });
 }
 
@@ -164,19 +170,19 @@ function addEventListenersControlElements() {
   });
 
   const userInfoMenuItem = document.querySelector('.options-menu__item_user-info');
-  userInfoMenuItem.addEventListener('click', () => toogleSidePanel('none', 'block'));
+  userInfoMenuItem.addEventListener('click', () => toggleSidePanel('none', 'block'));
 
   const sharedFilesMenuItem = document.querySelector('.options-menu__item_shared-files');
-  sharedFilesMenuItem.addEventListener('click', () => toogleSidePanel('block', 'none'));
+  sharedFilesMenuItem.addEventListener('click', () => toggleSidePanel('block', 'none'));
 
   const clearHistoryMenuItem = document.querySelector('.options-menu__item_clear-history');
   clearHistoryMenuItem.addEventListener('click', clearHistory);
 
-  msgBoxPhotoBtn.addEventListener('click', clickPhotoBtn);
+  msgBoxPhotoBtn.addEventListener('click', clickMsgBoxPhotoBtn);  
 }
 
 
-function toogleSidePanel(sharedPanelStyle, userInfoPanelStyle) {
+function toggleSidePanel(sharedPanelStyle, userInfoPanelStyle) {
   optionsMenuItems.classList.remove('options-menu_show');
   sidePanel.style.display = sharedPanelStyle;
   userInfoPanel.style.display = userInfoPanelStyle; 
@@ -184,6 +190,9 @@ function toogleSidePanel(sharedPanelStyle, userInfoPanelStyle) {
 
 
 function clearHistory() {
+
+  const messagesJSON = JSON.parse(localStorage.messagesJSON);        
+  const contactsJSON = JSON.parse(localStorage.contactsJSON);        
 
   optionsMenuItems.classList.remove('options-menu_show');  
 
@@ -194,17 +203,15 @@ function clearHistory() {
   sidePanelFiles.textContent = '';
   sidePanelAudio.textContent = '';
   sidePanelPhotos.textContent = '';    
-
-  const messagesJSON = JSON.parse(localStorage.messagesJSON);        
+ 
   const otherUserId = document.querySelector('.contacts__item_active').dataset.userId;
+  
   messagesJSON.users.forEach(el => {
     if (el.other_user_id == otherUserId) {
       el.messages.splice(0, el.messages.length);
     }
   });
-
-  const contactsJSON = JSON.parse(localStorage.contactsJSON);        
-  document.querySelector('.contacts__item_active  .contact-item-text__message').textContent = '';
+  
   contactsJSON.contacts.forEach(el => {
     if (el.user_id == otherUserId) {        
       el.last_message = {snippet:'', message_sender_id:'', timestamp_precise:''};
@@ -215,19 +222,23 @@ function clearHistory() {
   localStorage.messagesJSON = JSON.stringify(messagesJSON);
   localStorage.contactsJSON = JSON.stringify(contactsJSON);
 
-  updateDataOnServer();
+  updateJSONFile('./contacts.json', JSON.stringify(contactsJSON));
+  updateJSONFile('./messages.json', JSON.stringify(messagesJSON));
+
+  const lastMessageActiveContact = document.querySelector('.contacts__item_active  .contact-item-text__message')
+  lastMessageActiveContact.textContent = '';
 }
 
 
 function onSelectFiles(event) {
   const files = Array.from(event.target.files);
   files.forEach(file => {
-    addAttacmentsItem(file.type, file.name, URL.createObjectURL(file), file);      
+    addAttacmentsItem(file.type, file.name, URL.createObjectURL(file));      
   });
 }
   
 
-function clickPhotoBtn(event) {
+function clickMsgBoxPhotoBtn(event) {
   
   event.preventDefault();
   photoBox.classList.add('photo-box_show');
@@ -252,11 +263,11 @@ function clickPhotoBtn(event) {
 
     });
 
-  msgBoxPhotoBtn.removeEventListener('click', clickPhotoBtn);
+  msgBoxPhotoBtn.removeEventListener('click', clickMsgBoxPhotoBtn);
 }
 
 
-function takePicture() {  
+function takePhoto() {  
   
   const video = document.createElement('video');
   const canvas = document.createElement('canvas');
@@ -264,7 +275,7 @@ function takePicture() {
 
   navigator.mediaDevices
     .getUserMedia({video: true, audio: false})
-    .then((stream) => {  
+    .then(stream => {  
       video.src = URL.createObjectURL(stream);
       videoStreams.push(stream);
 
@@ -277,7 +288,7 @@ function takePicture() {
           canvas.height = video.videoHeight;
           ctx.drawImage(video, 0, 0);  
 
-          const src = canvas.toDataURL();  
+          const urlBlob = canvas.toDataURL();  
 
           const photo = document.createElement('div'); 
           photo.className = 'photo-box-app__photo';
@@ -285,14 +296,14 @@ function takePicture() {
 
           const img = document.createElement('img'); 
           img.style.height = '291px';         
-          img.src = src;
+          img.src = urlBlob;
                   
           photo.appendChild(img); 
 
           const cancelBtn = document.createElement('div');
           cancelBtn.className = 'photo-box-app__cancelBtn';
-          cancelBtn.addEventListener('click', event => {
-            event.currentTarget.parentElement.parentElement.removeChild(event.currentTarget.parentElement);
+          cancelBtn.addEventListener('click', ev => {
+            ev.currentTarget.parentElement.parentElement.removeChild(ev.currentTarget.parentElement);
             document.querySelector('video').style.display = 'block';
             takePhotoBtn.style.display = 'block';
           });
@@ -304,11 +315,8 @@ function takePicture() {
             const imageItemsChat = document.querySelectorAll('.photo__item_chat');
             const filetype = 'image/png';
             const fileName = `image${imageItemsChat.length + 1}.png`;
-            const link = src;
 
-            canvas.toBlob(function(blob) {
-              addAttacmentsItem(filetype, fileName, src, new File([blob], fileName, {type: filetype}));   
-            });
+            addAttacmentsItem(filetype, fileName, urlBlob);  
    
             closePhotoBox();              
           });         
@@ -328,7 +336,7 @@ function closePhotoBox() {
 
   photoBox.classList.remove('photo-box_show');
   
-  videoStreams.forEach((el) => {
+  videoStreams.forEach(el => {
     el.getVideoTracks().map(track => track.stop());
   });
 
@@ -341,7 +349,17 @@ function closePhotoBox() {
   app.removeChild(document.querySelector('video'));
   photoBox.removeChild(document.querySelector('.photo-box__closeBtn'));
 
-  msgBoxPhotoBtn.addEventListener('click', clickPhotoBtn);
+  msgBoxPhotoBtn.addEventListener('click', clickMsgBoxPhotoBtn);
+}
+
+function rollbackContentContactItems() {
+  const contactsJSON = JSON.parse(localStorage.contactsJSONInit);
+  contactsJSON.contacts.forEach((el) => {
+    const lastMessageItem = document.querySelector(`[data-user-id="${el.user_id}"] .contacts-item__text .contact-item-text__message`);
+    lastMessageItem.textContent = el.last_message.message_sender_id == el.user_id
+    ? el.last_message.snippet 
+    : `You: ${el.last_message.snippet}`;
+  });
 }
 
 
@@ -350,64 +368,73 @@ function createContactsSection() {
   const contactsJSON = JSON.parse(localStorage.contactsJSON);
 
   const fragment = contactsJSON.contacts.reduce((memo, el) => {   
-    const contactsItem = document.createElement('div');
-    contactsItem.className = 'contacts__item'; 
-    contactsItem.dataset.userId = el.user_id;
+    const item = document.createElement('div');
+    item.className = 'contacts__item'; 
+    item.dataset.status = el.status;
+    item.dataset.userId = el.user_id;
 
     const avatar = document.createElement('div');
     avatar.className = 'contacts-item__avatar';
-    contactsItem.appendChild(avatar);    
+    item.appendChild(avatar);    
 
-    const avatarPic = document.createElement('img');
-    avatarPic.className = 'avatar__pic';  
-    avatarPic.src = el.avatar_pic_link;   
-    avatar.appendChild(avatarPic); 
+    const img = document.createElement('img');
+    img.className = 'avatar__pic';  
+    img.src = el.avatar_pic_link;   
+    avatar.appendChild(img); 
 
-    const text = document.createElement('div');
-    text.className = 'contacts-item__text';
-    contactsItem.appendChild(text); 
+    const wrap = document.createElement('div');
+    wrap.className = 'contacts-item__text';
+    item.appendChild(wrap); 
 
-    const textName = document.createElement('div');
-    textName.className = 'contact-item-text__name';
-    textName.textContent = el.user_name;
-    textName.dataset.status = el.status;
-    text.appendChild(textName);
+    const name = document.createElement('div');
+    name.className = 'contact-item-text__name';
+    name.textContent = el.user_name;
+    wrap.appendChild(name);
 
-    const textMessage = document.createElement('div');
-    textMessage.className = 'contact-item-text__message';
+    const lastMessage = document.createElement('div');
+    lastMessage.className = 'contact-item-text__message';
 
     if (el.last_message.snippet) {
-      textMessage.textContent = el.last_message.message_sender_id == el.user_id
+      lastMessage.textContent = el.last_message.message_sender_id == el.user_id
       ? el.last_message.snippet 
       : `You: ${el.last_message.snippet}`;
     }      
 
-    text.appendChild(textMessage);     
-    memo.appendChild(contactsItem);
+    wrap.appendChild(lastMessage);     
+    memo.appendChild(item);
     return memo;
     }, document.createDocumentFragment());   
 
   contactSection.appendChild(fragment); 
 
-  const contactItems = document.querySelectorAll('.contacts__item');
-  Array.from(contactItems).forEach(el => {
-    el.addEventListener('click', ev => {
-      const otherUserItemContactList = ev.currentTarget
-      createChatHistoryInit(otherUserItemContactList);
-    });
-  }); 
-
-  localStorage.contactsJSON = JSON.stringify(contactsJSON); 
+  addEventListenersContactItems();
 }
 
 
-function createChatHistoryInit(otherUserItemContactList) {
+function addEventListenersContactItems() {
+  const contactItems = document.querySelectorAll('.contacts__item');
+
+  Array.from(contactItems).forEach(el => {
+    el.addEventListener('click', ev => {
+      const messagesJSON = JSON.parse(localStorage.messagesJSON);        
+      const contactsJSON = JSON.parse(localStorage.contactsJSON);      
+      updateJSONFile('./contacts.json', JSON.stringify(contactsJSON));      
+      updateJSONFile('./messages.json', JSON.stringify(messagesJSON));      
+      const activeContact = ev.currentTarget;
+      createChatHistoryInit(activeContact);
+    });
+  }); 
+}
+
+
+function createChatHistoryInit(activeContact) {
 
   const contactsJSON = JSON.parse(localStorage.contactsJSON);
+  localStorage.contactsJSONInit = localStorage.contactsJSON;
 
   const contactItems = document.querySelectorAll('.contacts__item');
   Array.from(contactItems).forEach(el => {el.classList.remove('contacts__item_active')});
-  otherUserItemContactList.classList.add('contacts__item_active');
+  activeContact.classList.add('contacts__item_active');
 
   chatHistorySection.textContent = '';
   sidePanelFiles.textContent = '';
@@ -416,38 +443,37 @@ function createChatHistoryInit(otherUserItemContactList) {
   clearAttacments();
 
   const topSectionTextName = document.querySelector('.top-section-text__name');
-  topSectionTextName.textContent = otherUserItemContactList.querySelector('.contact-item-text__name').textContent;
-  const topSectionTextStatus = document.querySelector('.top-section-text__status');
-  topSectionTextStatus.textContent = otherUserItemContactList.querySelector('.contact-item-text__name').dataset.status;
-
+  topSectionTextName.textContent = activeContact.querySelector('.contact-item-text__name').textContent;
+  const topSectionStatus = document.querySelector('.top-section-text__status');
+  topSectionStatus.textContent = activeContact.dataset.status;
 
   const avatar = userInfoPanel.querySelector('.avatar__pic');
-  avatar.src = otherUserItemContactList.querySelector('.avatar__pic').src;
+  avatar.src = activeContact.querySelector('.avatar__pic').src;
 
   const name = userInfoPanel.querySelector('.user-info-section__name');
-  name.textContent = otherUserItemContactList.querySelector('.contact-item-text__name').textContent;
+  name.textContent = activeContact.querySelector('.contact-item-text__name').textContent;
 
   const status = userInfoPanel.querySelector('.user-info-section__status');
-  status.textContent = otherUserItemContactList.querySelector('.contact-item-text__name').dataset.status;  
+  status.textContent = activeContact.dataset.status;
 
   loadData('./messages.json')
     .then((result) => {      
       localStorage.messagesJSON = result;
-      createChatHistory(otherUserItemContactList);
+      createChatHistory(activeContact);
     });        
 }
 
 
-function createChatHistory(otherUserItemContactList) {
+function createChatHistory(activeContact) {
 
   const messagesJSON = JSON.parse(localStorage.messagesJSON);
 
-  const userMessages = messagesJSON.users.find(el => {return el.other_user_id == otherUserItemContactList.dataset.userId;});
+  const userMessages = messagesJSON.users.find(el => {return el.other_user_id == activeContact.dataset.userId;});
 
   if (userMessages) {    
     const fragment = userMessages.messages.reduce((memo, el, index) => {        
       const otherUserId = userMessages.other_user_id;      
-      const avatarPic = otherUserItemContactList.querySelector('img').src;
+      const avatarPic = activeContact.querySelector('img').src;
       const messageSenderId = el.message_sender_id;
       const timestamp = el.timestamp_precise;
       const messageText = el.message_text;
@@ -458,24 +484,20 @@ function createChatHistory(otherUserItemContactList) {
     }, document.createDocumentFragment()); 
 
     chatHistorySection.appendChild(fragment);     
-  }
-
-  if (connection) {
-    connection.close();
   }    
 
-  setConnectionWS(otherUserItemContactList);
+  setConnectionWS(activeContact);
 }
 
 
 function sendMessage(event) {
 
   event.preventDefault();
-  const otherUserItemContactList = document.querySelector('.contacts__item_active');
+  const activeContact = document.querySelector('.contacts__item_active');
   const audioItemsChat = document.querySelectorAll('.audio__item_chat .audio-item__playstate');
 
   const index = audioItemsChat.length;
-  const otherUserId = otherUserItemContactList.dataset.userId;      
+  const otherUserId = activeContact.dataset.userId;      
   const avatar = '';
   const messageSenderId = senderId;
   const timestamp = Date.now();
@@ -489,7 +511,7 @@ function sendMessage(event) {
   ? `You: ${messageText.substr(0, 20)}...`
   : `You: ${messageText}`;
 
-  otherUserItemContactList.querySelector('.contact-item-text__message').textContent = messageTextFragment;
+  activeContact.querySelector('.contact-item-text__message').textContent = messageTextFragment;
   
   textInput.value = '';
 
@@ -501,23 +523,23 @@ function sendMessage(event) {
   
   disableSendBtn(); 
 
-  if (connection) {
-    connection.send(messageText);
+  if (connections[otherUserId]) {
+    connections[otherUserId].send(messageText);
   }  
 }
 
 
-function receiveMessage(ev) {
+function receiveMessage(ev, userId) {
 
-  const otherUserItemContactList = document.querySelector('.contacts__item_active');
+  const activeContact = document.querySelector(`[data-user-id="${userId}"]`);
 
   if (ev.data == '...') {    
-    otherUserItemContactList.querySelector('.contact-item-text__message').textContent = 'typing...';
+    activeContact.querySelector('.contact-item-text__message').textContent = 'typing...';
   } else {
 
     const index = 0;
-    const otherUserId = otherUserItemContactList.dataset.userId;      
-    const avatar = otherUserItemContactList.querySelector('.avatar__pic').src;
+    const otherUserId = activeContact.dataset.userId;      
+    const avatar = activeContact.querySelector('.avatar__pic').src;
     const messageSenderId = otherUserId;
     const timestamp = String(Date.now());
     const messageText = ev.data;
@@ -530,7 +552,7 @@ function receiveMessage(ev) {
     ? `${messageText.substr(0, 20)}...`
     : messageText;
 
-    otherUserItemContactList.querySelector('.contact-item-text__message').textContent = messageTextFragment;    
+    activeContact.querySelector('.contact-item-text__message').textContent = messageTextFragment;    
     
     addMessageLocalStorage(otherUserId, messageSenderId, timestamp, messageText);
   } 
@@ -572,14 +594,14 @@ function addMessageChat(index, otherUserId, avatarPicture, messageSenderId, time
     const attachment = document.createElement('div');
     attachment.className = 'ch-msg-cnt__attachment';
     messageContent.appendChild(attachment);
-    attachmentsMessage.forEach(element => { 
+    attachmentsMessage.forEach(el => { 
 
-      if (element.type.search(/audio/) != -1) {
-        addElementAudio(attachment, element.link, element.file_name, index);                 
-      }  else if (element.type.search(/image/) != -1) {
-        addElementImage(attachment, element.link);
+      if (el.type.search(/audio/) != -1) {
+        addElementAudio(attachment, el.link, el.file_name, index);                 
+      }  else if (el.type.search(/image/) != -1) {
+        addElementImage(attachment, el.link);
       } else {   
-        addElementFile(attachment, element.link, element.file_name);
+        addElementFile(attachment, el.link, el.file_name);
       }
 
     });          
@@ -595,7 +617,6 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
   const contactsJSON = JSON.parse(localStorage.contactsJSON);  
 
   const message = {};
-  const files = [];
 
   messagesJSON.users.forEach(el => {
     if (el.other_user_id == otherUserId) {
@@ -605,9 +626,11 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
       message.attachments = [];
 
       if (attachments.length) {
-        const attachmentMessage = attachments.forEach(el => { 
-          files.push(el.file);
-          message.attachments.push({type: el.type, file_name: el.file_name, link: `./files/${el.file_name}`});
+        const attachmentMessage = attachments.forEach(element => {
+          const statusSend = sendAttacment(element);
+          if (!statusSend) {
+            message.attachments.push({type: element.type, file_name: element.file_name, link: `./files/${element.file_name}`});
+          }
         }); 
       } 
 
@@ -628,29 +651,46 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
         "timestamp_precise": timestamp
       };
       el.last_message = lastMessage;
-      el.status = document.querySelector('.contact-item-text__name').dataset.status;
+      el.status = document.querySelector('.contacts__item_active').dataset.status;
     }
     
     return el;
   });
 
   localStorage.messagesJSON = JSON.stringify(messagesJSON);
-  localStorage.contactsJSON = JSON.stringify(contactsJSON);
+  // localStorage.contactsJSON = JSON.stringify(contactsJSON);
+}
 
-  updateDataOnServer();
 
-  if (files.length > 0) {
-    files.forEach((el) => {
+function sendAttacment(attachment) {
+  const xhr = new XMLHttpRequest();
+  const urlBlob = attachment.link;
+  xhr.open('GET', urlBlob);
+  xhr.addEventListener('load', () => {
+    if (xhr.status === 200) {              
+      console.log(`Файл "${attachment.file_name}" создан.`);
       const xhr = new XMLHttpRequest();
       xhr.open('POST', './');
       xhr.addEventListener('load', () => {
-        if (xhr.status === 200){
-          console.log(`Файл ${file.name} сохранен.`);
+
+        if (xhr.status === 200) {
+          console.log(`Файл "${attachment.file_name}" успешно передан.`);
+          return 0;          
+        } else {
+          console.log(`Ошибка при отправке на сервер файла "${attachment.file_name}: ${xhr.statusText}".`);
+          return 1;
         }
+
       });
-      xhr.send(el);
-    });      
-  } 
+
+      xhr.send(attachment);
+
+    } else {
+      console.log(`Ошибка при создании файла "${attachment.file_name} ${xhr.statusText}".`);
+    }
+  });
+  
+  xhr.send();
 }
 
 
@@ -662,68 +702,68 @@ function addElementText(parentElement, text) {
 }
 
 
-function addElementFile(parentElement, link, fileName) {
-  const fileItemChat = createElementFile(link, fileName);
-  fileItemChat.className = 'files__item files__item_chat';
-  parentElement.appendChild(fileItemChat);
-  const fileItemShared = createElementFile(link, fileName);
-  fileItemShared.className = 'files__item files__item_shared';
-  sidePanelFiles.appendChild(fileItemShared);
+function addElementFile(parentElement, ref, fileName) {
+  const itemChat = createElementFile(ref, fileName);
+  itemChat.className = 'files__item files__item_chat';
+  parentElement.appendChild(itemChat);
+  const itemShared = createElementFile(ref, fileName);
+  itemShared.className = 'files__item files__item_shared';
+  sidePanelFiles.appendChild(itemShared);
 }   
 
 
-function addElementAudio(parentElement, link, fileName, key) {
-  const audioItemChat = createElementAudio(link, fileName, key); 
-  audioItemChat.className = 'audio__item audio__item_chat';
-  audioItemChat.querySelector('.audio-item__playstate').name = key;
-  parentElement.appendChild(audioItemChat); 
-  const audioItemShared = createElementAudio(link, fileName, key); 
-  audioItemShared.className = 'audio__item audio__item_shared';  
-  audioItemShared.querySelector('.audio-item__playstate').name = `${key}-s`;  
-  sidePanelAudio.appendChild(audioItemShared);
+function addElementAudio(parentElement, ref, fileName, key) {
+  const itemChat = createElementAudio(ref, fileName, key); 
+  itemChat.className = 'audio__item audio__item_chat';
+  itemChat.querySelector('.audio-item__playstate').dataset.key = key;
+  parentElement.appendChild(itemChat); 
+  const itemShared = createElementAudio(ref, fileName, key); 
+  itemShared.className = 'audio__item audio__item_shared';  
+  itemShared.querySelector('.audio-item__playstate').dataset.key = `${key}-s`;  
+  sidePanelAudio.appendChild(itemShared);
 }
 
 
-function addElementImage(parentElement, link) {  
-  createElementImageChat(parentElement, link);    
-  const imageItemShared = createElementImageSidePanelPhotos(link);
-  imageItemShared.className = 'photos__item photos__item_shared'; 
-  sidePanelPhotos.appendChild(imageItemShared);
+function addElementImage(parentElement, ref) {  
+  createElementImageChat(parentElement, ref);    
+  const itemShared = createElementImageSidePanel(ref);
+  itemShared.className = 'photos__item photos__item_shared'; 
+  sidePanelPhotos.appendChild(itemShared);
 } 
 
 
-function createElementFile(link, fileName) {
+function createElementFile(ref, fileName) {
 
   const attachmentItem = document.createElement('div');   
-  const fileIcon = document.createElement('div');
-  fileIcon.className = 'files-item__icon';
-  attachmentItem.appendChild(fileIcon);
+  const icon = document.createElement('div');
+  icon.className = 'files-item__icon';
+  attachmentItem.appendChild(icon);
 
-  const fileLink = document.createElement('a');
-  fileLink.className = 'files-item__title';
-  fileLink.setAttribute('download', '');
-  fileLink.href = link;
-  fileLink.textContent = fileName;
-  attachmentItem.appendChild(fileLink);
+  const refEl = document.createElement('a');
+  refEl.className = 'files-item__title';
+  refEl.setAttribute('download', '');
+  refEl.href = ref;
+  refEl.textContent = fileName;
+  attachmentItem.appendChild(refEl);
 
   return attachmentItem;
 }
 
 
-function createElementAudio(link, fileName) {
+function createElementAudio(ref, fileName) {
 
   const attachmentItem = document.createElement('div');             
   const playBtn = document.createElement('div');
   playBtn.className = 'audio-item__play-button';   
   attachmentItem.appendChild(playBtn);
 
-  const audioLink = document.createElement('a');
-  audioLink.className = 'audio-item__playstate'; 
-  audioLink.href = link;
+  const refEl = document.createElement('a');
+  refEl.className = 'audio-item__playstate'; 
+  refEl.href = ref;
 
-  addEventListenerAudio(audioLink);
+  addEventListenerAudio(refEl);
 
-  attachmentItem.appendChild(audioLink);
+  attachmentItem.appendChild(refEl);
 
   const title = document.createElement('div');
   title.className = 'audio-item__title'; 
@@ -734,12 +774,12 @@ function createElementAudio(link, fileName) {
 }  
 
 
-function createElementImageChat(parentElement, link) {
+function createElementImageChat(parentElement, ref) {
   
   const attachmentItem = document.createElement('img');       
   attachmentItem.className = 'photo__item'; 
   attachmentItem.classList.add('photo__item_chat')
-  attachmentItem.src = link;
+  attachmentItem.src = ref;
 
   attachmentItem.addEventListener('click', ev => {
     const isChat = true;
@@ -750,29 +790,29 @@ function createElementImageChat(parentElement, link) {
 }
 
 
-function createElementImageSidePanelPhotos(link) {
+function createElementImageSidePanel(ref) {
 
-  const sidePanelPhotoItem = document.createElement('div');  
-  const sidePanelPhotoLink = document.createElement('a');       
-  sidePanelPhotoLink.className = 'photos-item__link'; 
-  sidePanelPhotoLink.href = link;
-  sidePanelPhotoItem.appendChild(sidePanelPhotoLink);
+  const item = document.createElement('div');  
+  const link = document.createElement('a');       
+  link.className = 'photos-item__link'; 
+  link.href = ref;
+  item.appendChild(link);
 
-  const sidePanelPhotoImg = document.createElement('img');       
-  sidePanelPhotoImg.className = 'photos-item__pic'; 
-  sidePanelPhotoImg.src = link;
-  sidePanelPhotoLink.appendChild(sidePanelPhotoImg);
+  const img = document.createElement('img');       
+  img.className = 'photos-item__pic'; 
+  img.src = ref;
+  link.appendChild(img);
 
-  const sidePanelPhotoOverlay = document.createElement('div');       
-  sidePanelPhotoOverlay.className = 'photos-item__overlay'; 
-  sidePanelPhotoLink.appendChild(sidePanelPhotoOverlay);  
+  const overlay = document.createElement('div');       
+  overlay.className = 'photos-item__overlay'; 
+  link.appendChild(overlay);  
 
-  sidePanelPhotoOverlay.addEventListener('click', ev => {
+  overlay.addEventListener('click', ev => {
     const isChat = false;
     showViewierPhoto(ev, isChat);
   });
 
-  return sidePanelPhotoItem;
+  return item;
 }
 
 
@@ -789,14 +829,14 @@ function addEventListenerAudio(item) {
       player.pause();
     } else {
       player.src = ev.currentTarget.href;
-      player.dataset.trackName = ev.currentTarget.name;
+      player.dataset.trackName = ev.currentTarget.dataset.key;
       player.currentTime = ev.currentTarget.dataset.startTime;  
       player.play();
       player.controls = true;  
 
-      const audioPlaystate = document.querySelectorAll('.audio-item__playstate');
+      const playBtns = document.querySelectorAll('.audio-item__playstate');
       
-      Array.from(audioPlaystate).forEach(el => {
+      Array.from(playBtns).forEach(el => {
         el.classList.remove('audio-item__playstate_play');
         el.dataset.startTime = 0;
       });    
@@ -804,35 +844,35 @@ function addEventListenerAudio(item) {
   });
 
   player.addEventListener('playing', ev => {
-    const currentTrack = document.querySelector("[name='" + ev.currentTarget.dataset.trackName + "']");
+    const currentTrack = document.querySelector(`[data-key="${ev.currentTarget.dataset.trackName}"]`);
     currentTrack.classList.add('audio-item__playstate_play');
   });
 
   player.addEventListener('pause', ev => {
-    const currentTrack = document.querySelector("[name='" + ev.currentTarget.dataset.trackName + "']");
+    const currentTrack = document.querySelector(`[data-key="${ev.currentTarget.dataset.trackName}"]`);
     currentTrack.classList.remove('audio-item__playstate_play');
     currentTrack.dataset.startTime = ev.currentTarget.currentTime;
   });
 }
 
 
-function addAttacmentsItem(fileType, fileName, link, file) {
+function addAttacmentsItem(fileType, fileName, ref) {
   
-  const attachmentsItem = document.createElement('div');
-  attachmentsItem.className = 'msg-box-attachments__item';
-  attachmentsSection.appendChild(attachmentsItem);
+  const item = document.createElement('div');
+  item.className = 'msg-box-attachments__item';
+  attachmentsSection.appendChild(item);
 
-  const attachmentsText = document.createElement('div');
-  attachmentsText.className = 'msg-box-attachments-item__text';
-  attachmentsText.textContent = fileName;
-  attachmentsItem.appendChild(attachmentsText);    
+  const title = document.createElement('div');
+  title.className = 'msg-box-attachments-item__text';
+  title.textContent = fileName;
+  item.appendChild(title);    
 
-  attachments.push({type: fileType, file_name: fileName, link: link, file: file});
+  attachments.push({type: fileType, file_name: fileName, link: ref});
 
-  const attachmentsDeleteIcon = document.createElement('div');
-  attachmentsDeleteIcon.className = 'msg-box-attachments-item__delete-icon';
+  const deleteBtn = document.createElement('div');
+  deleteBtn.className = 'msg-box-attachments-item__delete-icon';
 
-  attachmentsDeleteIcon.addEventListener('click', event => {
+  deleteBtn.addEventListener('click', event => {
     const elementRemove = attachments.findIndex(el => {
       return el.file_name == event.target.parentElement.querySelector('.msg-box-attachments-item__text').textContent
     });
@@ -842,10 +882,11 @@ function addAttacmentsItem(fileType, fileName, link, file) {
     disableSendBtn();
   });
 
-  attachmentsItem.appendChild(attachmentsDeleteIcon);
+  item.appendChild(deleteBtn);
 
   disableSendBtn(); 
 }
+
 
 function clearAttacments() {
   attachments.splice(0, attachments.length);
@@ -855,35 +896,27 @@ function clearAttacments() {
 
 function showViewierPhoto(ev, isChat) {
 
-  const imageViewBox = document.querySelector('.image-view-box');
-
   ev.preventDefault();
-  imageViewBox.classList.add('image-view-box_show');
-  imageViewBox.querySelector('.image-view-box-top__pic').src = isChat
+  presentation.classList.add('image-view-box_show');
+  presentation.querySelector('.image-view-box-top__pic').src = isChat
   ? ev.currentTarget.src
   : ev.currentTarget.previousElementSibling.src;
 
-  const cloneSidePanelPhotos = sidePanelPhotos.cloneNode(true);
-  cloneSidePanelPhotos.classList.remove('shared__content_photos');
-  cloneSidePanelPhotos.classList.remove('shared__content');
-  cloneSidePanelPhotos.classList.add('image-view-box__bottom');
-  imageViewBox.appendChild(cloneSidePanelPhotos);
+  const photos = sidePanelPhotos.cloneNode(true);
+  photos.classList.remove('shared__content_photos');
+  photos.classList.remove('shared__content');
+  photos.classList.add('image-view-box__bottom');
+  presentation.appendChild(photos);
 
-  const imageViewBoxPhotos = document.querySelectorAll('.image-view-box__bottom .photos__item');
+  const photoList = document.querySelectorAll('.image-view-box__bottom .photos__item');
   
-  Array.from(imageViewBoxPhotos).forEach(el => {      
+  Array.from(photoList).forEach(el => {      
     el.classList.remove('photos__item_shared');
     el.classList.add('photos__item_view-box');      
     el.firstElementChild.addEventListener('click', ev => {
       ev.preventDefault();
-      imageViewBox.querySelector('.image-view-box-top__pic').src = ev.target.previousElementSibling.src;
+      presentation.querySelector('.image-view-box-top__pic').src = ev.target.previousElementSibling.src;
     });
-  });
-
-  document.querySelector('.image-view-box__closeBtn').addEventListener('click', (ev) => {
-    const imageViewBoxPhotosSection = document.querySelector('.image-view-box__bottom');
-    imageViewBox.removeChild(imageViewBoxPhotosSection);
-    imageViewBox.classList.remove('image-view-box_show');
   });
 }  
 
