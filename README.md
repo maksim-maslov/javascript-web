@@ -1,6 +1,6 @@
 Необходимо реализовать приложение "Сервис обмена сообщениями". Приложение будет запускаться и работать в браузере. 
 
-После реализации версия проекта будет доступна по ссылке: [Document](https://maksim-maslov.github.io/dp-hj)
+После реализации версия проекта будет доступна по ссылке: [https://maksim-maslov.github.io/dp-hj](https://maksim-maslov.github.io/dp-hj)
 
 
 ![preview.png](https://github.com/maksim-maslov/dp-hj/blob/master/res/preview.png)
