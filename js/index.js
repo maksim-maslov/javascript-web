@@ -89,13 +89,13 @@ function setConnectionWS(activeContact) {
     const connection = new WebSocket(`wss://neto-api.herokuapp.com/chat`);
     connections[userId] = connection;
 
-    connections[userId].addEventListener('open', (ev) => {  
+    connections[userId].addEventListener('open', ev => {  
       updateStatusActiveContact(userId, 'Online');
     });
 
     connections[userId].addEventListener('message', ev => receiveMessage(ev, userId));
 
-    connections[userId].addEventListener('close', (ev) => {  
+    connections[userId].addEventListener('close', ev => {  
       updateStatusActiveContact(userId, 'Offline'); 
       connections[userId] = '';
     }); 
@@ -145,7 +145,7 @@ function init() {
   });
 
   loadData('./contacts.json')
-    .then((result) => {
+    .then(result => {
       localStorage.contactsJSON = result;    
       createContactsSection();
       const activeContact = document.querySelector('.contacts__item');
@@ -230,22 +230,23 @@ function clearHistory() {
 }
 
 
-function onSelectFiles(event) {
-  const files = Array.from(event.target.files);
+function onSelectFiles(ev) {
+  const files = Array.from(ev.target.files);
   files.forEach(file => {
+    const fileType = 
     addAttacmentsItem(file.type, file.name, URL.createObjectURL(file));      
   });
 }
   
 
-function clickMsgBoxPhotoBtn(event) {
+function clickMsgBoxPhotoBtn(ev) {
   
-  event.preventDefault();
+  ev.preventDefault();
   photoBox.classList.add('photo-box_show');
 
   navigator.mediaDevices
     .getUserMedia({video: true, audio: false})
-    .then(function(stream) {
+    .then(stream => {
 
       const video = document.createElement('video');
       video.src = URL.createObjectURL(stream);
@@ -312,9 +313,11 @@ function takePhoto() {
           const okBtn = document.createElement('div');
           okBtn.className = 'photo-box-app__okBtn';
           okBtn.addEventListener('click', () => {
-            const imageItemsChat = document.querySelectorAll('.photo__item_chat');
-            const filetype = 'image/png';
-            const fileName = `image${imageItemsChat.length + 1}.png`;
+            const chatItems = document.querySelectorAll('.photo__item_chat');
+            const attachmentsItems = document.querySelectorAll('.msg-box-attachments__item');
+            const index = chatItems.length + Array.from(attachmentsItems).filter(el => el.textContent.search(/.png/) > 0).length  + 1;
+            const filetype = 'image/png';            
+            const fileName = `image${index}.png`;
 
             addAttacmentsItem(filetype, fileName, urlBlob);  
    
@@ -354,7 +357,7 @@ function closePhotoBox() {
 
 function rollbackContentContactItems() {
   const contactsJSON = JSON.parse(localStorage.contactsJSONInit);
-  contactsJSON.contacts.forEach((el) => {
+  contactsJSON.contacts.forEach(el => {
     const lastMessageItem = document.querySelector(`[data-user-id="${el.user_id}"] .contacts-item__text .contact-item-text__message`);
     lastMessageItem.textContent = el.last_message.message_sender_id == el.user_id
     ? el.last_message.snippet 
@@ -457,7 +460,7 @@ function createChatHistoryInit(activeContact) {
   status.textContent = activeContact.dataset.status;
 
   loadData('./messages.json')
-    .then((result) => {      
+    .then(result => {      
       localStorage.messagesJSON = result;
       createChatHistory(activeContact);
     });        
@@ -468,35 +471,32 @@ function createChatHistory(activeContact) {
 
   const messagesJSON = JSON.parse(localStorage.messagesJSON);
 
-  const userMessages = messagesJSON.users.find(el => {return el.other_user_id == activeContact.dataset.userId;});
+  const userMessages = messagesJSON.users.find(el => el.other_user_id == activeContact.dataset.userId);
 
   if (userMessages) {    
-    const fragment = userMessages.messages.reduce((memo, el, index) => {        
+    userMessages.messages.forEach(el => {        
       const otherUserId = userMessages.other_user_id;      
       const avatarPic = activeContact.querySelector('img').src;
       const messageSenderId = el.message_sender_id;
       const timestamp = el.timestamp_precise;
       const messageText = el.message_text;
       const attachmentsMessage = el.attachments;      
-      const messageElement = addMessageChat(index, otherUserId, avatarPic, messageSenderId, timestamp, messageText, attachmentsMessage);  
-      memo.appendChild(messageElement);
-      return memo;
-    }, document.createDocumentFragment()); 
-
-    chatHistorySection.appendChild(fragment);     
+      const messageElement = addMessageChat(otherUserId, avatarPic, messageSenderId, timestamp, messageText, attachmentsMessage);  
+      chatHistorySection.appendChild(messageElement);
+    }); 
+   
   }    
 
   setConnectionWS(activeContact);
 }
 
 
-function sendMessage(event) {
+function sendMessage(ev) {
 
-  event.preventDefault();
+  ev.preventDefault();
   const activeContact = document.querySelector('.contacts__item_active');
   const audioItemsChat = document.querySelectorAll('.audio__item_chat .audio-item__playstate');
 
-  const index = audioItemsChat.length;
   const otherUserId = activeContact.dataset.userId;      
   const avatar = '';
   const messageSenderId = senderId;
@@ -504,7 +504,7 @@ function sendMessage(event) {
   const messageText = textInput.value;
   const attachmentsMessage = attachments; 
 
-  const message = addMessageChat(index, otherUserId, avatar, messageSenderId, timestamp, messageText, attachmentsMessage);
+  const message = addMessageChat(otherUserId, avatar, messageSenderId, timestamp, messageText, attachmentsMessage);
   chatHistorySection.appendChild(message);
 
   const messageTextFragment = messageText.length > 20
@@ -537,7 +537,6 @@ function receiveMessage(ev, userId) {
     activeContact.querySelector('.contact-item-text__message').textContent = 'typing...';
   } else {
 
-    const index = 0;
     const otherUserId = activeContact.dataset.userId;      
     const avatar = activeContact.querySelector('.avatar__pic').src;
     const messageSenderId = otherUserId;
@@ -545,7 +544,7 @@ function receiveMessage(ev, userId) {
     const messageText = ev.data;
     const attachmentsMessage = [];
 
-    const message = addMessageChat(index, otherUserId, avatar, messageSenderId, timestamp, messageText, attachmentsMessage);
+    const message = addMessageChat(otherUserId, avatar, messageSenderId, timestamp, messageText, attachmentsMessage);
     chatHistorySection.appendChild(message);
 
     const messageTextFragment = messageText.length > 20
@@ -559,7 +558,7 @@ function receiveMessage(ev, userId) {
 }
 
 
-function addMessageChat(index, otherUserId, avatarPicture, messageSenderId, timestamp, messageText, attachmentsMessage) {
+function addMessageChat(otherUserId, avatarPicture, messageSenderId, timestamp, messageText, attachmentsMessage) {
 
   const message = document.createElement('div');
   message.className = 'chat-history__message';
@@ -571,7 +570,7 @@ function addMessageChat(index, otherUserId, avatarPicture, messageSenderId, time
     message.classList.add('chat-history__message_left');
     const avatar = document.createElement('div');
     avatar.className = 'ch-message__avatar';
-    message.appendChild(avatar);    
+    message.appendChild(avatar);
 
     const avatarPic = document.createElement('img');
     avatarPic.className = 'avatar__pic';  
@@ -580,7 +579,7 @@ function addMessageChat(index, otherUserId, avatarPicture, messageSenderId, time
 
   } else {
     message.classList.add('chat-history__message_right');
-  }        
+  }    
 
   const messageContent = document.createElement('div');
   messageContent.className = 'ch-message__content';
@@ -594,11 +593,13 @@ function addMessageChat(index, otherUserId, avatarPicture, messageSenderId, time
     const attachment = document.createElement('div');
     attachment.className = 'ch-msg-cnt__attachment';
     messageContent.appendChild(attachment);
-    attachmentsMessage.forEach(el => { 
+    attachmentsMessage.forEach((el, index) => { 
 
       if (el.type.search(/audio/) != -1) {
-        addElementAudio(attachment, el.link, el.file_name, index);                 
-      }  else if (el.type.search(/image/) != -1) {
+        const chatItems = document.querySelectorAll('.audio__item_chat');
+        const key = chatItems.length + index + 1;
+        addElementAudio(attachment, el.link, el.file_name, key);                 
+      } else if (el.type.search(/image/) != -1) {
         addElementImage(attachment, el.link);
       } else {   
         addElementFile(attachment, el.link, el.file_name);
@@ -872,13 +873,13 @@ function addAttacmentsItem(fileType, fileName, ref) {
   const deleteBtn = document.createElement('div');
   deleteBtn.className = 'msg-box-attachments-item__delete-icon';
 
-  deleteBtn.addEventListener('click', event => {
-    const elementRemove = attachments.findIndex(el => {
-      return el.file_name == event.target.parentElement.querySelector('.msg-box-attachments-item__text').textContent
+  deleteBtn.addEventListener('click', ev => {
+    const removeElement = attachments.findIndex(el => {
+      return el.file_name == ev.target.parentElement.querySelector('.msg-box-attachments-item__text').textContent
     });
-
-    attachments.splice(elementRemove, 1);
-    attachmentsSection.removeChild(event.target.parentElement);
+    URL.revokeDataURL(attachments[removeElement].link);
+    attachments.splice(removeElement, 1);
+    attachmentsSection.removeChild(ev.target.parentElement);
     disableSendBtn();
   });
 
