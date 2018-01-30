@@ -75,7 +75,7 @@
           [
             {"type":"image",
             "file_name":"image1",
-            "link":"./img/image1.jpg"            
+            "link":"./files/image1.jpg"            
             }
           ]
         },
@@ -86,7 +86,7 @@
           [
             {"type":"image",
             "file_name":"image2",
-            "link":"./img/image2.jpg"            
+            "link":"./files/image2.jpg"            
             }
           ]
         },
@@ -97,7 +97,7 @@
           [
             {"type":"image",
             "file_name":"image3",
-            "link":"./img/image3.jpg"            
+            "link":"./files/image3.jpg"            
             }
           ]
         },
@@ -108,7 +108,7 @@
           [
             {"type":"image",
             "file_name":"image4",
-            "link":"./img/image4.jpg"            
+            "link":"./files/image4.jpg"            
             }
           ]
         },
@@ -119,7 +119,7 @@
           [
             {"type":"image",
             "file_name":"image5",
-            "link":"./img/image5.jpg"            
+            "link":"./files/image5.jpg"            
             }
           ]
         },
@@ -130,7 +130,7 @@
           [
             {"type":"image",
             "file_name":"image6",
-            "link":"./img/image6.jpg"            
+            "link":"./files/image6.jpg"            
             }
           ]
         },
@@ -141,7 +141,7 @@
           [
             {"type":"image",
             "file_name":"image7",
-            "link":"./img/image7.jpg"            
+            "link":"./files/image7.jpg"            
             }
           ]
         },
@@ -152,7 +152,7 @@
           [
             {"type":"image",
             "file_name":"image8",
-            "link":"./img/image8.jpg"            
+            "link":"./files/image8.jpg"            
             }
           ]
         },
@@ -163,7 +163,7 @@
           [
             {"type":"image",
             "file_name":"image9",
-            "link":"./img/image9.jpg"            
+            "link":"./files/image9.jpg"            
             }
           ]
         }                
@@ -254,7 +254,7 @@
           [
             {"type":"image",
             "file_name":"image1",
-            "link":"./img/image1.jpg"            
+            "link":"./files/image1.jpg"            
             }
           ]
         },
@@ -265,7 +265,7 @@
           [
             {"type":"image",
             "file_name":"image2",
-            "link":"./img/image2.jpg"            
+            "link":"./files/image2.jpg"            
             }
           ]
         },
@@ -276,7 +276,7 @@
           [
             {"type":"image",
             "file_name":"image3",
-            "link":"./img/image3.jpg"            
+            "link":"./files/image3.jpg"            
             }
           ]
         },
@@ -287,7 +287,7 @@
           [
             {"type":"image",
             "file_name":"image4",
-            "link":"./img/image4.jpg"            
+            "link":"./files/image4.jpg"            
             }
           ]
         },
@@ -298,7 +298,7 @@
           [
             {"type":"image",
             "file_name":"image5",
-            "link":"./img/image5.jpg"            
+            "link":"./files/image5.jpg"            
             }
           ]
         },
@@ -309,7 +309,7 @@
           [
             {"type":"image",
             "file_name":"image6",
-            "link":"./img/image6.jpg"            
+            "link":"./files/image6.jpg"            
             }
           ]
         },
@@ -320,7 +320,7 @@
           [
             {"type":"image",
             "file_name":"image7",
-            "link":"./img/image7.jpg"
+            "link":"./files/image7.jpg"
             }
           ]
         },
@@ -331,7 +331,7 @@
           [
             {"type":"image",
             "file_name":"image8",
-            "link":"./img/image8.jpg"
+            "link":"./files/image8.jpg"
             }
           ]
         },
@@ -342,7 +342,7 @@
           [
             {"type":"image",
             "file_name":"image9",
-            "link":"./img/image9.jpg"
+            "link":"./files/image9.jpg"
             }
           ]
         },
@@ -353,7 +353,7 @@
           [
             {"type":"image",
             "file_name":"image10",
-            "link":"./img/image10.jpg"
+            "link":"./files/image10.jpg"
             }
           ]
         },
@@ -364,7 +364,7 @@
           [
             {"type":"image",
             "file_name":"image11",
-            "link":"./img/image11.jpg"
+            "link":"./files/image11.jpg"
             }
           ]
         },
@@ -375,7 +375,7 @@
           [
             {"type":"image",
             "file_name":"image12",
-            "link":"./img/image12.jpg"
+            "link":"./files/image12.jpg"
             }
           ]
         }

@@ -2,7 +2,7 @@
 	[	
 		{"user_id":"13071",
 		"user_name":"Andrey Samarin",
-		"avatar_pic_link":"./img/avatar-pic1.jpg",
+		"avatar_pic_link":"./files/avatar-pic1.jpg",
 		"status":"Offline",
 		"last_message":
 			{"snippet":"sit amet veniam, quis nostrud",
@@ -12,7 +12,7 @@
 		},		
 		{"user_id":"13072",
 		"user_name":"Aleksey Shevelev",
-		"avatar_pic_link":"./img/avatar-pic2.jpg",
+		"avatar_pic_link":"./files/avatar-pic2.jpg",
 		"status":"Offline",
 		"last_message":
 			{"snippet":"aliquip ex ea commodo ",
@@ -22,7 +22,7 @@
 		},
 		{"user_id":"13073",
 		"user_name":"Boris Klimov",
-		"avatar_pic_link":"./img/avatar-pic3.jpg",
+		"avatar_pic_link":"./files/avatar-pic3.jpg",
 		"status":"Offline",
 		"last_message":
 			{"snippet":"consectetur adipiscing elit",
@@ -32,7 +32,7 @@
 		},
 		{"user_id":"13074",
 		"user_name":"Dmitry Kulikov",
-		"avatar_pic_link":"./img/avatar-pic4.jpg",
+		"avatar_pic_link":"./files/avatar-pic4.jpg",
 		"status":"Offline",
 		"last_message":
 			{"snippet":"exercitation ullamco laboris",
@@ -42,7 +42,7 @@
 		},
 		{"user_id":"13075",
 		"user_name":"Gennady Yousupov",
-		"avatar_pic_link":"./img/avatar-pic5.jpg",
+		"avatar_pic_link":"./files/avatar-pic5.jpg",
 		"status":"Offline",
 		"last_message":
 			{"snippet":"veniam, quis nostrud ",
@@ -53,7 +53,7 @@
 		{"user_id":"13076",
 		"user_name":"Vasily Esmanov",
 		"status":"Offline",
-		"avatar_pic_link":"./img/avatar-pic6.jpg",
+		"avatar_pic_link":"./files/avatar-pic6.jpg",
 		"last_message":
 			{"snippet":"do eiusmod tempor incididunt",
 			"message_sender_id":"13076",
