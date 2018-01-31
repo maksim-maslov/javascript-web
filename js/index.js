@@ -603,11 +603,7 @@ function sendMessage(ev) {
   if (connections[otherUserId]) {
     connections[otherUserId].send(messageText);
   } 
-
-
-
-
-	}
+}
 
 
 //Обработчик события получения сообщения по WS-соединению
@@ -703,15 +699,6 @@ function addMessageChat(otherUserId, avatarPicture, messageSenderId, timestamp, 
   }
 
   chatHistorySection.appendChild(message);
-
-  
-
-  // message.scrollIntoView(true)
-  // const scrollTop = chatHistorySection.scrollTop;
-  // console.log(scrollTop);
-  
-  // console.log(chatHistorySection.scrollTop);
-
 } 
 
 
@@ -764,7 +751,7 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
     }
   });
 
-  let timerId = setInterval(() => chatHistorySection.scrollTop += 100);
+  let timerId = setInterval(() => chatHistorySection.scrollTop += 600);
 		
 	setTimeout(() => clearInterval(timerId), 500);
 
