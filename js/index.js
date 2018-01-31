@@ -35,7 +35,7 @@ const player = document.querySelector('.audioplayer');
 function loadData(url) {
   return new Promise((done, fail) => {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', url);
+    xhr.open('GET', url, false);
     xhr.addEventListener('error', e => fail(xhr));
     xhr.addEventListener('load', e => {
       if (200 <= xhr.status && xhr.status < 300) {
@@ -52,7 +52,7 @@ function loadData(url) {
 function sendData(url, data) {
   return new Promise((done, fail) => {
     const xhr = new XMLHttpRequest();
-    xhr.open('PUT', url);
+    xhr.open('PUT', url, false);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.addEventListener('error', e => fail(xhr));
     xhr.addEventListener('load', e => {
@@ -202,7 +202,10 @@ function clearHistory() {
   chatHistorySection.textContent = '';
   sidePanelFiles.textContent = '';
   sidePanelAudio.textContent = '';
-  sidePanelPhotos.textContent = '';    
+  sidePanelPhotos.textContent = '';   
+
+  const lastMessage = document.querySelector('.contacts__item_active  .contact-item-text__message')
+  lastMessage.textContent = '';
  
   const otherUserId = document.querySelector('.contacts__item_active').dataset.userId;
   
@@ -224,9 +227,6 @@ function clearHistory() {
 
   updateJSONFile('./contacts.json', JSON.stringify(contactsJSON));
   updateJSONFile('./messages.json', JSON.stringify(messagesJSON));
-
-  const lastMessageActiveContact = document.querySelector('.contacts__item_active  .contact-item-text__message')
-  lastMessageActiveContact.textContent = '';
 }
 
 
@@ -355,13 +355,17 @@ function closePhotoBox() {
   msgBoxPhotoBtn.addEventListener('click', clickMsgBoxPhotoBtn);
 }
 
+
 function rollbackContentContactItems() {
+
   const contactsJSON = JSON.parse(localStorage.contactsJSONInit);
+  localStorage.contactsJSON = JSON.stringify(contactsJSON);
+
   contactsJSON.contacts.forEach(el => {
     const lastMessageItem = document.querySelector(`[data-user-id="${el.user_id}"] .contacts-item__text .contact-item-text__message`);
     lastMessageItem.textContent = el.last_message.message_sender_id == el.user_id
     ? el.last_message.snippet 
-    : `You: ${el.last_message.snippet}`;
+    : `You: ${el.last_message.snippet}`;  
   });
 }
 
@@ -481,8 +485,7 @@ function createChatHistory(activeContact) {
       const timestamp = el.timestamp_precise;
       const messageText = el.message_text;
       const attachmentsMessage = el.attachments;      
-      const messageElement = addMessageChat(otherUserId, avatarPic, messageSenderId, timestamp, messageText, attachmentsMessage);  
-      chatHistorySection.appendChild(messageElement);
+      addMessageChat(otherUserId, avatarPic, messageSenderId, timestamp, messageText, attachmentsMessage);  
     }); 
    
   }    
@@ -504,8 +507,7 @@ function sendMessage(ev) {
   const messageText = textInput.value;
   const attachmentsMessage = attachments; 
 
-  const message = addMessageChat(otherUserId, avatar, messageSenderId, timestamp, messageText, attachmentsMessage);
-  chatHistorySection.appendChild(message);
+  addMessageChat(otherUserId, avatar, messageSenderId, timestamp, messageText, attachmentsMessage);
 
   const messageTextFragment = messageText.length > 20
   ? `You: ${messageText.substr(0, 20)}...`
@@ -544,8 +546,7 @@ function receiveMessage(ev, userId) {
     const messageText = ev.data;
     const attachmentsMessage = [];
 
-    const message = addMessageChat(otherUserId, avatar, messageSenderId, timestamp, messageText, attachmentsMessage);
-    chatHistorySection.appendChild(message);
+    addMessageChat(otherUserId, avatar, messageSenderId, timestamp, messageText, attachmentsMessage);
 
     const messageTextFragment = messageText.length > 20
     ? `${messageText.substr(0, 20)}...`
@@ -608,7 +609,8 @@ function addMessageChat(otherUserId, avatarPicture, messageSenderId, timestamp, 
     });          
   }  
 
-  return message;
+  chatHistorySection.appendChild(message);
+  chatHistorySection.scrollTop = 9999;
 } 
 
 
@@ -671,7 +673,7 @@ function sendAttacment(attachment) {
     if (xhr.status === 200) {              
       console.log(`Файл "${attachment.file_name}" создан.`);
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', './');
+      xhr.open('POST', './files');
       xhr.addEventListener('load', () => {
 
         if (xhr.status === 200) {
