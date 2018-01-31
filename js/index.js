@@ -170,6 +170,10 @@ function init() {
     presentation.classList.remove('image-view-box_show');
   });
 
+  window.addEventListener('load', () => {
+  	chatHistorySection.scrollTop += 99000;
+  });
+
   loadData('./contacts.json')
     .then(result => {
       localStorage.contactsJSON = result;    
@@ -598,8 +602,12 @@ function sendMessage(ev) {
 
   if (connections[otherUserId]) {
     connections[otherUserId].send(messageText);
-  }  
-}
+  } 
+
+
+
+
+	}
 
 
 //Обработчик события получения сообщения по WS-соединению
@@ -692,10 +700,18 @@ function addMessageChat(otherUserId, avatarPicture, messageSenderId, timestamp, 
       }
 
     });          
-  }  
+  }
 
   chatHistorySection.appendChild(message);
-  chatHistorySection.scrollTop = 9999;
+
+  
+
+  // message.scrollIntoView(true)
+  // const scrollTop = chatHistorySection.scrollTop;
+  // console.log(scrollTop);
+  
+  // console.log(chatHistorySection.scrollTop);
+
 } 
 
 
@@ -747,6 +763,10 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
       el.status = document.querySelector('.contacts__item_active').dataset.status;
     }
   });
+
+  let timerId = setInterval(() => chatHistorySection.scrollTop += 100);
+		
+	setTimeout(() => clearInterval(timerId), 500);
 
   localStorage.messagesJSON = JSON.stringify(messagesJSON);
   // localStorage.contactsJSON = JSON.stringify(contactsJSON);
