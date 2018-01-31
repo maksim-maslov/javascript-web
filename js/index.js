@@ -559,7 +559,9 @@ function createChatHistory(activeContact) {
       addMessageChat(otherUserId, avatarPic, messageSenderId, timestamp, messageText, attachmentsMessage);  
     }); 
    
-  }    
+  }   
+
+  chatHistorySection.scrollTop += 9999; 
 
   setConnectionWS(activeContact);
 }
@@ -751,9 +753,9 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
     }
   });
 
-  let timerId = setInterval(() => chatHistorySection.scrollTop += 600);
+  let timerId = setInterval(() => {chatHistorySection.scrollTop += 600}, 100);
 		
-	setTimeout(() => clearInterval(timerId), 500);
+	setTimeout(() => clearInterval(timerId), 1000);
 
   localStorage.messagesJSON = JSON.stringify(messagesJSON);
   // localStorage.contactsJSON = JSON.stringify(contactsJSON);
