@@ -1,36 +1,40 @@
 'use strict';
 
-const senderId = '10001';
-const connections = {};
-const attachments = [];
-const videoStreams = [];
+const senderId = '10001';  // id пользователя
+const connections = {};    // Массив WS-соединений
+const attachments = [];    // Массив, содержащий информацию о прикрепленных к сообщению файлах
+const videoStreams = [];   // Массив открытых медиапотоков с веб-камеры
 
-const contactSection = document.querySelector('.contacts');
-const chatHistorySection = document.querySelector('.chat-history');
-const attachmentsSection = document.querySelector('.message-box__attachments');
-const sidePanel = document.querySelector('.side-panel');  
-const userInfoPanel = document.querySelector('.user-info-section');    
+const contactSection = document.querySelector('.contacts');                     // HTMLElement списка контактов
+const chatHistorySection = document.querySelector('.chat-history');             // HTMLElement истории сообщений
+const attachmentsSection = document.querySelector('.message-box__attachments'); // HTMLElement прикрепленных к сообщению файлов
+const sidePanel = document.querySelector('.side-panel');                        // HTMLElement боковой панели
+const userInfoPanel = document.querySelector('.user-info-section');             // HTMLElement панели User Info
 
-const sidePanelFiles = document.querySelector('.shared__content_files');
-const sidePanelAudio = document.querySelector('.shared__content_audio');
-const sidePanelPhotos = document.querySelector('.shared__content_photos');
+const sidePanelFiles = document.querySelector('.shared__content_files');        // HTMLElement панели Shared Files
+const sidePanelAudio = document.querySelector('.shared__content_audio');        // HTMLElement панели Shared Audio
+const sidePanelPhotos = document.querySelector('.shared__content_photos');      // HTMLElement панели Shared Photos
 
-const textInput = document.querySelector('.message-box__input');
-const submitBtn = document.querySelector('#submitbtn');
-const sendMsgBtn = document.querySelector('.submit-button');
-const clipBtn = document.querySelector('#uploadbtn');
-const msgBoxPhotoBtn = document.querySelector('.message-box__photo-button');
-const takePhotoBtn = document.querySelector('.photo-box-app__controls'); 
+const textInput = document.querySelector('.message-box__input');                // поле ввода сообщения
+const submitBtn = document.querySelector('#submitbtn');                         // кнопка отправки сообщения
+const sendMsgBtn = document.querySelector('.submit-button');                    // HTMLElement кнопки отправки сообщения
+const clipBtn = document.querySelector('#uploadbtn');                           // кнопка прикрепления файла к сообщению
+const msgBoxPhotoBtn = document.querySelector('.message-box__photo-button');    // кнопка запуска веб-камеры 
+const takePhotoBtn = document.querySelector('.photo-box-app__controls');        // кнопка "сделать фото"
 
-const photoBox = document.querySelector('.photo-box');
-const app = document.querySelector('.photo-box__app');    
+const photoBox = document.querySelector('.photo-box');                          // "окно веб-камеры""
+const app = document.querySelector('.photo-box__app');                          // элементы управления в "окне веб-каб=меры"
 
-const presentation = document.querySelector('.image-view-box');
+const presentation = document.querySelector('.image-view-box');                 // просмотрщик файлов изображений
 
-const optionsMenuItems = document.querySelector('.options-menu');
+const optionsMenuItems = document.querySelector('.options-menu');               // меню опций
 
-const player = document.querySelector('.audioplayer');
+const player = document.querySelector('.audioplayer');                          // аудиопроигрыватель
 
+
+//Получает данные
+//param url - url ресурса
+//
 
 function loadData(url) {
   return new Promise((done, fail) => {
@@ -48,6 +52,11 @@ function loadData(url) {
   });
 }
 
+
+//Отправляет данные 
+//param url - url ресурса
+//param data - данные в формате json
+//
 
 function sendData(url, data) {
   return new Promise((done, fail) => {
@@ -67,17 +76,26 @@ function sendData(url, data) {
 }
 
 
-function updateJSONFile(url, file) {
-  sendData(url, file)
+//Обновляет данные
+//param url - url ресурса
+//param data - данные в формате json
+//
+
+function updateJSONFile(url, data) {
+  sendData(url, data)
     .then(result => {
       console.log(`Файл "${result}" обновлен`)
     })
     .catch(error => {
-      console.log(`Ошибка  при обновлении файла "${url}": ${error}`);
+      console.log(`Ошибка при обновлении файла "${url}": ${error}`);
       rollbackContentContactItems();
     });
 }
 
+
+//Устанавливает соединение по протоколу WebSocket
+//param activeContact - HTMLElement из списка контактов
+//
 
 function setConnectionWS(activeContact) {
 
@@ -103,6 +121,11 @@ function setConnectionWS(activeContact) {
 }
 
 
+//Обновляет статус собеседника
+//param userId - id собеседника
+//param status - новый статус ('Online'/'Offline')
+//
+
 function updateStatusActiveContact(userId, status) {
   const activeContact = document.querySelector(`[data-user-id="${userId}"]`);
   const topSectionStatus = document.querySelector('.top-section-text__status');
@@ -110,6 +133,9 @@ function updateStatusActiveContact(userId, status) {
   activeContact.dataset.status = status;
 }
 
+
+//Инициализирует приложение
+//
 
 function init() {
 
@@ -153,6 +179,9 @@ function init() {
     });
 }
 
+
+//Добавляет обработчики событий для меню опций и элементов скрывающих боковые панели
+//
   
 function addEventListenersControlElements() {
 
@@ -182,12 +211,20 @@ function addEventListenersControlElements() {
 }
 
 
+//Показывает и скрывает инфрмацию о пользователе
+//param sharedPanelStyle - значение css стиля display ('none'/'block') 
+//param userInfoPanelStyle - значение css стиля display ('none'/'block')
+//
+
 function toggleSidePanel(sharedPanelStyle, userInfoPanelStyle) {
   optionsMenuItems.classList.remove('options-menu_show');
   sidePanel.style.display = sharedPanelStyle;
   userInfoPanel.style.display = userInfoPanelStyle; 
 }
 
+
+//Очищает историю переписки с текущим собеседником
+//
 
 function clearHistory() {
 
@@ -218,7 +255,6 @@ function clearHistory() {
   contactsJSON.contacts.forEach(el => {
     if (el.user_id == otherUserId) {        
       el.last_message = {snippet:'', message_sender_id:'', timestamp_precise:''};
-    return;
     }
   });
 
@@ -230,6 +266,10 @@ function clearHistory() {
 }
 
 
+//Обрабатывет событие выбора файла для отправки в сообщении
+//param ev - объект события MouseEvent
+//
+
 function onSelectFiles(ev) {
   const files = Array.from(ev.target.files);
   files.forEach(file => {
@@ -237,7 +277,11 @@ function onSelectFiles(ev) {
     addAttacmentsItem(file.type, file.name, URL.createObjectURL(file));      
   });
 }
-  
+
+
+//Запускает веб-камеру, открывает и обрабатывает медиапоток с веб-камеры
+//param ev - объект события MouseEvent
+//  
 
 function clickMsgBoxPhotoBtn(ev) {
   
@@ -267,6 +311,9 @@ function clickMsgBoxPhotoBtn(ev) {
   msgBoxPhotoBtn.removeEventListener('click', clickMsgBoxPhotoBtn);
 }
 
+
+//Создает фото по нажатию кнопки в "фотобудке"
+//
 
 function takePhoto() {  
   
@@ -335,6 +382,9 @@ function takePhoto() {
 }
 
 
+//Останавливает запись с веб-камеры
+//
+
 function closePhotoBox() {
 
   photoBox.classList.remove('photo-box_show');
@@ -356,6 +406,9 @@ function closePhotoBox() {
 }
 
 
+//Производит откат текста последнего сообщения в HTMLElement из списка контактов
+//
+
 function rollbackContentContactItems() {
 
   const contactsJSON = JSON.parse(localStorage.contactsJSONInit);
@@ -369,6 +422,9 @@ function rollbackContentContactItems() {
   });
 }
 
+
+//Создает и отображает список контактов (в левой части окна браузера)
+//
 
 function createContactsSection() {
 
@@ -418,6 +474,9 @@ function createContactsSection() {
 }
 
 
+//Добавляет обработчики событий на HTMLElement-ы из списка контактов
+//
+
 function addEventListenersContactItems() {
   const contactItems = document.querySelectorAll('.contacts__item');
 
@@ -433,6 +492,10 @@ function addEventListenersContactItems() {
   }); 
 }
 
+
+//Инициализирует чат
+//param activeContact - выбранный HTMLElement из списка контактов
+//
 
 function createChatHistoryInit(activeContact) {
 
@@ -471,6 +534,10 @@ function createChatHistoryInit(activeContact) {
 }
 
 
+//Выводит историю переписки
+//param activeContact - выбранный HTMLElement из списка контактов
+//
+
 function createChatHistory(activeContact) {
 
   const messagesJSON = JSON.parse(localStorage.messagesJSON);
@@ -493,6 +560,10 @@ function createChatHistory(activeContact) {
   setConnectionWS(activeContact);
 }
 
+
+//Отправляет сообщение из текстового поля и прикрепленные файлы собеседнику
+//param ev - объект события MouseEvent
+//
 
 function sendMessage(ev) {
 
@@ -531,6 +602,11 @@ function sendMessage(ev) {
 }
 
 
+//Обработчик события получения сообщения по WS-соединению
+//param ev - объект события ...
+//param userId - id собеседника
+//
+
 function receiveMessage(ev, userId) {
 
   const activeContact = document.querySelector(`[data-user-id="${userId}"]`);
@@ -558,6 +634,15 @@ function receiveMessage(ev, userId) {
   } 
 }
 
+
+//Добавляет в чат сообщение 
+//param otherUserId - id собеседника
+//param avatarPicture - ссылка на изображение аватара собеседника
+//param messageSenderId - id отправителя сообщения
+//param timestamp - время сообщения в миллисекундах
+//param messageText - текст сообщения
+//param attachmentsMessage - массив файлов, прикрепленных к сообщению
+//
 
 function addMessageChat(otherUserId, avatarPicture, messageSenderId, timestamp, messageText, attachmentsMessage) {
 
@@ -614,6 +699,13 @@ function addMessageChat(otherUserId, avatarPicture, messageSenderId, timestamp, 
 } 
 
 
+//Добавляет сообщение в массив сообщений в localStorage
+//param otherUserId - id собеседника
+//param messageSenderId - id отправителя сообщения
+//param timestamp - время сообщения в миллисекундах
+//param messageText - текст сообщения
+//
+
 function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, messageText) {
   
   const messagesJSON = JSON.parse(localStorage.messagesJSON);
@@ -639,8 +731,6 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
 
       el.messages.push(message);       
     }
-      
-    return el;
   });    
 
   contactsJSON.contacts.forEach(el => {
@@ -656,14 +746,16 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
       el.last_message = lastMessage;
       el.status = document.querySelector('.contacts__item_active').dataset.status;
     }
-    
-    return el;
   });
 
   localStorage.messagesJSON = JSON.stringify(messagesJSON);
   // localStorage.contactsJSON = JSON.stringify(contactsJSON);
 }
 
+
+//Отправляет прикрепленные к сообщению файлы
+//param attachment - объект из массива прикрепленных к сообщению файлов
+//
 
 function sendAttacment(attachment) {
   const xhr = new XMLHttpRequest();
@@ -680,7 +772,7 @@ function sendAttacment(attachment) {
           console.log(`Файл "${attachment.file_name}" успешно передан.`);
           return 0;          
         } else {
-          console.log(`Ошибка при отправке на сервер файла "${attachment.file_name}: ${xhr.statusText}".`);
+          console.log(`Ошибка при отправке на сервер файла "${attachment.file_name}": ${xhr.statusText}.`);
           return 1;
         }
 
@@ -689,13 +781,18 @@ function sendAttacment(attachment) {
       xhr.send(attachment);
 
     } else {
-      console.log(`Ошибка при создании файла "${attachment.file_name} ${xhr.statusText}".`);
+      console.log(`Ошибка при создании файла "${attachment.file_name}": ${xhr.statusText}.`);
     }
   });
   
   xhr.send();
 }
 
+
+//Добавляет текст сообщения в HTMLElement чата
+//param parentElement - HTMLElement, в который будет помещен созданный элемент
+//param text - текст сообщения
+//
 
 function addElementText(parentElement, text) {
   const messageText = document.createElement('div');
@@ -704,6 +801,12 @@ function addElementText(parentElement, text) {
   parentElement.appendChild(messageText);
 }
 
+
+//Добавляет файл в HTMLElement чата и на боковую панель
+//param parentElement - HTMLElement, в который будет помещен созданный элемент
+//param ref - ссылка на файл
+//param fileName - имя файла
+//
 
 function addElementFile(parentElement, ref, fileName) {
   const itemChat = createElementFile(ref, fileName);
@@ -714,6 +817,13 @@ function addElementFile(parentElement, ref, fileName) {
   sidePanelFiles.appendChild(itemShared);
 }   
 
+
+//Добавляет аудиофайл в HTMLElement чата и на боковую панель
+//param parentElement - HTMLElement, в который будет помещен созданный элемент
+//param ref - ссылка на аудиофайл
+//param fileName - имя аудиофайла
+//param key = ключ для обозначения уникальности аудиофайлов в окне браузера
+//
 
 function addElementAudio(parentElement, ref, fileName, key) {
   const itemChat = createElementAudio(ref, fileName, key); 
@@ -727,6 +837,11 @@ function addElementAudio(parentElement, ref, fileName, key) {
 }
 
 
+//Добавляет файл изображения в HTMLElement чата и на боковую панель
+//param parentElement - HTMLElement, в который будет помещен созданный элемент
+//param ref - ссылка на файл изображения
+//
+
 function addElementImage(parentElement, ref) {  
   createElementImageChat(parentElement, ref);    
   const itemShared = createElementImageSidePanel(ref);
@@ -735,30 +850,42 @@ function addElementImage(parentElement, ref) {
 } 
 
 
+//Создает HTMLElement для файла в чат
+//param ref - ссылка на файл
+//param fileName - имя файла
+//return item - созданный HTMLElement
+//
+
 function createElementFile(ref, fileName) {
 
-  const attachmentItem = document.createElement('div');   
+  const item = document.createElement('div');   
   const icon = document.createElement('div');
   icon.className = 'files-item__icon';
-  attachmentItem.appendChild(icon);
+  item.appendChild(icon);
 
   const refEl = document.createElement('a');
   refEl.className = 'files-item__title';
   refEl.setAttribute('download', '');
   refEl.href = ref;
   refEl.textContent = fileName;
-  attachmentItem.appendChild(refEl);
+  item.appendChild(refEl);
 
-  return attachmentItem;
+  return item;
 }
 
 
+//Создает HTMLElement для аудиофайла в чат
+//param ref - ссылка на аудиофайл
+//param fileName - имя аудиофайла
+//return item - созданный HTMLElement
+//
+
 function createElementAudio(ref, fileName) {
 
-  const attachmentItem = document.createElement('div');             
+  const item = document.createElement('div');             
   const playBtn = document.createElement('div');
   playBtn.className = 'audio-item__play-button';   
-  attachmentItem.appendChild(playBtn);
+  item.appendChild(playBtn);
 
   const refEl = document.createElement('a');
   refEl.className = 'audio-item__playstate'; 
@@ -766,32 +893,42 @@ function createElementAudio(ref, fileName) {
 
   addEventListenerAudio(refEl);
 
-  attachmentItem.appendChild(refEl);
+  item.appendChild(refEl);
 
   const title = document.createElement('div');
   title.className = 'audio-item__title'; 
   title.textContent = fileName;
-  attachmentItem.appendChild(title);
+  item.appendChild(title);
 
-  return attachmentItem;
+  return item;
 }  
 
 
+//Создает HTMLElement для файла изображения в чат
+//param parentElement - HTMLElement, в который будет помещен созданный элемент
+//param ref - ссылка на файл изображения
+//
+
 function createElementImageChat(parentElement, ref) {
   
-  const attachmentItem = document.createElement('img');       
-  attachmentItem.className = 'photo__item'; 
-  attachmentItem.classList.add('photo__item_chat')
-  attachmentItem.src = ref;
+  const item = document.createElement('img');       
+  item.className = 'photo__item'; 
+  item.classList.add('photo__item_chat')
+  item.src = ref;
 
-  attachmentItem.addEventListener('click', ev => {
+  item.addEventListener('click', ev => {
     const isChat = true;
     showViewierPhoto(ev, isChat);
   });
 
-  parentElement.appendChild(attachmentItem);
+  parentElement.appendChild(item);
 }
 
+
+//Создает HTMLElement для файла изображения на боковую панель
+//param ref - ссылка на файл изображения
+//return item - созданный HTMLElement
+//
 
 function createElementImageSidePanel(ref) {
 
@@ -818,6 +955,10 @@ function createElementImageSidePanel(ref) {
   return item;
 }
 
+
+//Добавляет обработчик события на кнопку воспроизведения аудиофайла
+//param item - HTMLElement кнопки
+//
 
 function addEventListenerAudio(item) {
 
@@ -859,6 +1000,12 @@ function addEventListenerAudio(item) {
 }
 
 
+//Добавляет в массив информацию о прикрепленном к сообщению файле
+//fileType - тип файла
+//fileName - имя файла
+//param ref - ссылка на файл
+//
+
 function addAttacmentsItem(fileType, fileName, ref) {
   
   const item = document.createElement('div');
@@ -879,7 +1026,7 @@ function addAttacmentsItem(fileType, fileName, ref) {
     const removeElement = attachments.findIndex(el => {
       return el.file_name == ev.target.parentElement.querySelector('.msg-box-attachments-item__text').textContent
     });
-    URL.revokeDataURL(attachments[removeElement].link);
+    
     attachments.splice(removeElement, 1);
     attachmentsSection.removeChild(ev.target.parentElement);
     disableSendBtn();
@@ -891,11 +1038,19 @@ function addAttacmentsItem(fileType, fileName, ref) {
 }
 
 
+//Очищает массив прикрепленных к сообщению файлов
+//
+
 function clearAttacments() {
   attachments.splice(0, attachments.length);
   attachmentsSection.textContent = '';
 }
 
+
+//Отображает просмотрщик файлов изображений
+//ev - объект события MouseEvent
+//isChat - чат или боковая панель
+//
 
 function showViewierPhoto(ev, isChat) {
 
@@ -924,6 +1079,9 @@ function showViewierPhoto(ev, isChat) {
 }  
 
 
+//Блокирует/разблокирует кнопку отправки сообщений
+//
+
 function disableSendBtn() {
   if (!textInput.value && !attachments.length) {
     submitBtn.disabled = true;
@@ -935,6 +1093,8 @@ function disableSendBtn() {
 }
   
 
+//Запускает приложение
+//
 
 init();
 
