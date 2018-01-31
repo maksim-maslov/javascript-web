@@ -85,12 +85,12 @@ body {
 }
 
 .contact-item-text__name {
-  font: 15px robotoregular; 
+  font: 15px Roboto; 
   color: rgba(0, 0, 0, 0.8);
 }
 
 .contact-item-text__message {
-  font: 13px robotoregular;               
+  font: 13px Roboto;               
   color: rgba(0, 0, 0, 0.4);
 }
 
@@ -116,12 +116,12 @@ body {
 }
 
 .top-section-text__name {
-  font: 14px robotoregular;
+  font: 14px Roboto;
   color: rgba(0, 0, 0, 0.8);
 }
 
 .top-section-text__status {
-  font: 11px robotoregular;
+  font: 11px Roboto;
   color: rgba(0, 0, 0, 0.4);
 }
 
@@ -191,7 +191,7 @@ body {
   padding: 10px;
   display: inline-block;
   max-width: 300px;
-  font: 14px robotoregular;
+  font: 14px Roboto;
   color: rgba(0, 0, 0, 0.8);
   text-align: left;
   word-break: break-all;
@@ -219,12 +219,18 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 5px;
+  margin-bottom: 5px;
   cursor: pointer;
 }
 
 .files__item_chat {
   border-radius: 5px;
+  margin-bottom: 5px;
   padding: 5px;
+}
+
+.audio__item_chat {
+  margin-bottom: 5px;
 }
 
 
@@ -247,7 +253,7 @@ body {
 
 .msg-box-attachments-item__text {
   display: inline-block;
-  font: 11px robotoregular; 
+  font: 11px Roboto; 
   color: rgba(0, 0, 0, 0.4);
   vertical-align: top;
   white-space: nowrap;
@@ -325,7 +331,7 @@ body {
   width: 530px;
   height: 32px;
   border: none;
-  font: 14px robotoregular; 
+  font: 14px Roboto; 
   color: rgba(0, 0, 0, 0.8);
   border-radius: 10px;
 }
@@ -387,13 +393,13 @@ body {
 
 .user-info-section__name {
   padding-top: 20px;
-  font: 14px robotoregular;
+  font: 14px Roboto;
   color: rgba(0, 0, 0, 0.8);
 }
 
 .user-info-section__status {
   padding-top: 10px;
-  font: 11px robotoregular;
+  font: 11px Roboto;
   color: rgba(0, 0, 0, 0.8);
 }
 
@@ -419,7 +425,7 @@ body {
 .shared-head__text {
   display: inline-block;
   color: rgba(0, 0, 0, 0.4);
-  font: 14px robotoregular;
+  font: 14px Roboto;
   vertical-align: bottom;
 }
 
@@ -477,7 +483,7 @@ body {
 
 .files-item__title {
   color: rgba(0, 0, 0, 0.8); 
-  font: 13px robotoregular;
+  font: 13px Roboto;
   vertical-align: bottom;
   padding-left: 5px;      
 }
@@ -530,7 +536,7 @@ body {
 
 .audio-item__title {
   color: rgba(0, 0, 0, 0.8);  
-  font: 13px robotoregular;
+  font: 13px Roboto;
   vertical-align: middle;
 }
 
@@ -615,7 +621,7 @@ body {
   display: block;
   padding: 5px 15px;
   color: rgba(0, 0, 0, 0.8); 
-  font: 14px robotoregular;
+  font: 14px Roboto;
 }
 
 .options-menu__item:hover {
