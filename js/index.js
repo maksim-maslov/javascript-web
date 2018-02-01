@@ -173,13 +173,13 @@ function init() {
   
 function addEventListenersControlElements() {
 
-  const sharedControlElement = document.querySelectorAll('.shared-head__control-element');
-  sharedControlElement.forEach(el => {
-    el.addEventListener('click', ev => {
+  sidePanel.addEventListener('click', ev => {
+    if (ev.target.classList.contains('shared-head__control-element')) {
       const element = ev.target.parentElement.parentElement.querySelector('.shared__content');
       element.classList.toggle('shared__content_hide');
-    });
+    }    
   });
+  
     
   const topSectionControlElement = document.querySelector('.top-section__control-element');
   topSectionControlElement.addEventListener('click', () => {
