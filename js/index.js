@@ -39,7 +39,7 @@ const player = document.querySelector('.audioplayer');                          
 function loadData(url) {
   return new Promise((done, fail) => {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', url, false);
+    xhr.open('GET', url);
     xhr.addEventListener('error', e => fail(xhr));
     xhr.addEventListener('load', e => {
       if (200 <= xhr.status && xhr.status < 300) {
@@ -143,18 +143,6 @@ function init() {
   
   textInput.addEventListener('input', () => {
     disableSendBtn();
-  });
-
-  sendMsgBtn.addEventListener('mousemove', () => {
-    if (!submitBtn.disabled) {
-      sendMsgBtn.style.opacity = '1';
-    }
-  });
-
-  sendMsgBtn.addEventListener('mouseout', () => {
-    if (!submitBtn.disabled) {
-      sendMsgBtn.style.opacity = '0.6';
-    }
   });
 
   clipBtn.addEventListener('change', onSelectFiles);  
@@ -312,7 +300,7 @@ function clickMsgBoxPhotoBtn(ev) {
 }
 
 
-//Создает фото по нажатию кнопки в "фотобудке"
+//Создает фото с веб-камеры"
 //
 
 function takePhoto() {  
@@ -760,8 +748,8 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
 //
 
 function scrollDown() {
-  let timerId = setInterval(() => {chatHistorySection.scrollTop += 40}, 10);    
-  setTimeout(() => clearInterval(timerId), 1000);
+  const timerId = setInterval(() => {chatHistorySection.scrollTop += 500}, 10);    
+  setTimeout(() => clearInterval(timerId), 500);
 }
 
 
@@ -1097,10 +1085,10 @@ function showViewierPhoto(ev, isChat) {
 function disableSendBtn() {
   if (!textInput.value && !attachments.length) {
     submitBtn.disabled = true;
-    sendMsgBtn.style.opacity = '0.4';
+    sendMsgBtn.classList.remove('submit-button_unlock');
   } else {
     submitBtn.disabled = false;
-    sendMsgBtn.style.opacity = '0.6';
+    sendMsgBtn.classList.add('submit-button_unlock');
   }
 }
   

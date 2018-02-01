@@ -359,10 +359,10 @@ body {
   opacity: 0.6;
 }
 
-.submit-button:hover {  
+.message-box__send-message-button:hover .submit-button_unlock {  
+  opacity: 1 !important;
   transition: opacity 0.25s ease-in-out;
 }
-
 
 
 #submitbtn {
