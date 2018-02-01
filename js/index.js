@@ -22,14 +22,17 @@ const clipBtn = document.querySelector('#uploadbtn');                           
 const msgBoxPhotoBtn = document.querySelector('.message-box__photo-button');    // кнопка запуска веб-камеры 
 const takePhotoBtn = document.querySelector('.photo-box-app__controls');        // кнопка "сделать фото"
 
-const photoBox = document.querySelector('.photo-box');                          // "окно веб-камеры""
-const app = document.querySelector('.photo-box__app');                          // элементы управления в "окне веб-каб=меры"
+const photoBox = document.querySelector('.photo-box');                          // окно воспроизведения видео с веб-камеры
+const app = document.querySelector('.photo-box__app');                          // окно управления фотосъёмкой
 
 const presentation = document.querySelector('.image-view-box');                 // просмотрщик файлов изображений
 
 const optionsMenuItems = document.querySelector('.options-menu');               // меню опций
 
 const player = document.querySelector('.audioplayer');                          // аудиопроигрыватель
+
+const video = document.querySelector('video');                                  // тег video
+const closeBtnPhotoBox = document.querySelector('.photo-box__closeBtn');        // кнопка закрытия окна воспроизведения видео с веб-камеры
 
 
 //Получает данные
@@ -152,6 +155,8 @@ function init() {
   takePhotoBtn.addEventListener('click', takePhoto);
 
   submitBtn.addEventListener('click', sendMessage);
+
+  closeBtnPhotoBox.addEventListener('click', closePhotoBox);
 
   const presentationCloseBtn = document.querySelector('.image-view-box__closeBtn');
   presentationCloseBtn.addEventListener('click', ev => {
@@ -284,20 +289,13 @@ function clickMsgBoxPhotoBtn(ev) {
   navigator.mediaDevices
     .getUserMedia({video: true, audio: false})
     .then(stream => {
-
-      const video = document.createElement('video');
+      
       video.src = URL.createObjectURL(stream);
 
-      app.insertBefore(video, app.firstElementChild);
+      video.style.display = 'block';
       takePhotoBtn.style.display = 'block';
-
-      const closeBtn = document.createElement('div'); 
-      closeBtn.className = 'photo-box__closeBtn';
-      photoBox.insertBefore(closeBtn, photoBox.firstElementChild);
-
+     
       videoStreams.push(stream);
-
-      closeBtn.addEventListener('click', closePhotoBox);
 
     });
 
@@ -305,7 +303,7 @@ function clickMsgBoxPhotoBtn(ev) {
 }
 
 
-//Создает фото с веб-камеры"
+//Создает фото с веб-камеры
 //
 
 function takePhoto() {  
@@ -386,14 +384,13 @@ function closePhotoBox() {
     el.getVideoTracks().map(track => track.stop());
   });
 
+  URL.revokeObjectURL(video.src);
+
   const photo = app.querySelector('.photo-box-app__photo');
   
   if (photo) {
     photo.parentElement.removeChild(photo);
   }
-
-  app.removeChild(document.querySelector('video'));
-  photoBox.removeChild(document.querySelector('.photo-box__closeBtn'));
 
   msgBoxPhotoBtn.addEventListener('click', clickMsgBoxPhotoBtn);
 }
