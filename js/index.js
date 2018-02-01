@@ -170,10 +170,6 @@ function init() {
     presentation.classList.remove('image-view-box_show');
   });
 
-  window.addEventListener('load', () => {
-  	chatHistorySection.scrollTop += 99000;
-  });
-
   loadData('./contacts.json')
     .then(result => {
       localStorage.contactsJSON = result;    
@@ -561,7 +557,7 @@ function createChatHistory(activeContact) {
    
   }   
 
-  chatHistorySection.scrollTop += 9999; 
+  scrollDown();
 
   setConnectionWS(activeContact);
 }
@@ -753,12 +749,19 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
     }
   });
 
-  let timerId = setInterval(() => {chatHistorySection.scrollTop += 600}, 100);
-		
-	setTimeout(() => clearInterval(timerId), 1000);
+  scrollDown();
 
   localStorage.messagesJSON = JSON.stringify(messagesJSON);
   // localStorage.contactsJSON = JSON.stringify(contactsJSON);
+}
+
+
+//Автоматически скроллит чат
+//
+
+function scrollDown() {
+  let timerId = setInterval(() => {chatHistorySection.scrollTop += 40}, 10);    
+  setTimeout(() => clearInterval(timerId), 1000);
 }
 
 
