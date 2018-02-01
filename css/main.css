@@ -379,25 +379,29 @@ body {
 }  
 
 
-.user-info-section {
+.user-info-panel {
   display: none;
   padding: 30px;
   text-align: center;
 }
 
-.user-info-section__avatar {
+.user-info-panel_show {
+  display: block;
+}
+
+.user-info-panel__avatar {
   display: inline-block;
   width: 180px;
   height: 180px;
 }
 
-.user-info-section__name {
+.user-info-panel__name {
   padding-top: 20px;
   font: 14px Roboto;
   color: rgba(0, 0, 0, 0.8);
 }
 
-.user-info-section__status {
+.user-info-panel__status {
   padding-top: 10px;
   font: 11px Roboto;
   color: rgba(0, 0, 0, 0.8);
@@ -405,9 +409,13 @@ body {
 
 
 .side-panel {
-  display: block;
+  display: none;
   height: 100%;
   padding: 0;
+}
+
+.side-panel_show {
+  display: block;
 }
 
 

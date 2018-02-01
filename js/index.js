@@ -9,7 +9,7 @@ const contactSection = document.querySelector('.contacts');                     
 const chatHistorySection = document.querySelector('.chat-history');             // HTMLElement истории сообщений
 const attachmentsSection = document.querySelector('.message-box__attachments'); // HTMLElement прикрепленных к сообщению файлов
 const sidePanel = document.querySelector('.side-panel');                        // HTMLElement боковой панели
-const userInfoPanel = document.querySelector('.user-info-section');             // HTMLElement панели User Info
+const userInfoPanel = document.querySelector('.user-info-panel');               // HTMLElement панели User Info
 
 const sidePanelFiles = document.querySelector('.shared__content_files');        // HTMLElement панели Shared Files
 const sidePanelAudio = document.querySelector('.shared__content_audio');        // HTMLElement панели Shared Audio
@@ -128,9 +128,11 @@ function setConnectionWS(activeContact) {
 
 function updateStatusActiveContact(userId, status) {
   const activeContact = document.querySelector(`[data-user-id="${userId}"]`);
+  activeContact.dataset.status = status;
   const topSectionStatus = document.querySelector('.top-section-text__status');
   topSectionStatus.textContent = status;
-  activeContact.dataset.status = status;
+  const userInfoPanelStatus = userInfoPanel.querySelector('.user-info-panel__status');
+  userInfoPanelStatus.textContent = status;
 }
 
 
@@ -179,7 +181,7 @@ function addEventListenersControlElements() {
       element.classList.toggle('shared__content_hide');
     }    
   });
-  
+
     
   const topSectionControlElement = document.querySelector('.top-section__control-element');
   topSectionControlElement.addEventListener('click', () => {
@@ -187,10 +189,10 @@ function addEventListenersControlElements() {
   });
 
   const userInfoMenuItem = document.querySelector('.options-menu__item_user-info');
-  userInfoMenuItem.addEventListener('click', () => toggleSidePanel('none', 'block'));
+  userInfoMenuItem.addEventListener('click', () => toggleSidePanel(false));
 
   const sharedFilesMenuItem = document.querySelector('.options-menu__item_shared-files');
-  sharedFilesMenuItem.addEventListener('click', () => toggleSidePanel('block', 'none'));
+  sharedFilesMenuItem.addEventListener('click', () => toggleSidePanel(true));
 
   const clearHistoryMenuItem = document.querySelector('.options-menu__item_clear-history');
   clearHistoryMenuItem.addEventListener('click', clearHistory);
@@ -200,14 +202,17 @@ function addEventListenersControlElements() {
 
 
 //Показывает и скрывает инфрмацию о пользователе
-//param sharedPanelStyle - значение css стиля display ('none'/'block') 
-//param userInfoPanelStyle - значение css стиля display ('none'/'block')
 //
 
-function toggleSidePanel(sharedPanelStyle, userInfoPanelStyle) {
+function toggleSidePanel(isShared) {
   optionsMenuItems.classList.remove('options-menu_show');
-  sidePanel.style.display = sharedPanelStyle;
-  userInfoPanel.style.display = userInfoPanelStyle; 
+  if (isShared) {
+    sidePanel.classList.add('side-panel_show');
+    userInfoPanel.classList.remove('user-info-panel_show');
+  } else {
+    sidePanel.classList.remove('side-panel_show');
+    userInfoPanel.classList.add('user-info-panel_show');
+  }    
 }
 
 
@@ -508,11 +513,8 @@ function createChatHistoryInit(activeContact) {
   const avatar = userInfoPanel.querySelector('.avatar__pic');
   avatar.src = activeContact.querySelector('.avatar__pic').src;
 
-  const name = userInfoPanel.querySelector('.user-info-section__name');
+  const name = userInfoPanel.querySelector('.user-info-panel__name');
   name.textContent = activeContact.querySelector('.contact-item-text__name').textContent;
-
-  const status = userInfoPanel.querySelector('.user-info-section__status');
-  status.textContent = activeContact.dataset.status;
 
   loadData('./messages.json')
     .then(result => {      
@@ -527,6 +529,9 @@ function createChatHistoryInit(activeContact) {
 //
 
 function createChatHistory(activeContact) {
+
+  const status = userInfoPanel.querySelector('.user-info-panel__status');
+  status.textContent = activeContact.dataset.status;
 
   const messagesJSON = JSON.parse(localStorage.messagesJSON);
 
