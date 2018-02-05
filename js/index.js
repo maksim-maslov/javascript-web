@@ -17,9 +17,10 @@ const sidePanelPhotos = document.querySelector('.shared__content_photos');      
 
 const textInput = document.querySelector('.message-box__input');                // поле ввода сообщения
 const submitBtn = document.querySelector('#submitbtn');                         // кнопка отправки сообщения
-const sendMsgBtn = document.querySelector('.submit-button');                    // HTMLElement кнопки отправки сообщения
+const sendMsgBtn = document.querySelector('.submit-button');                    // тег Label для связи с кнопкой отправки сообщения
 const clipBtn = document.querySelector('#uploadbtn');                           // кнопка прикрепления файла к сообщению
-const msgBoxPhotoBtn = document.querySelector('.message-box__photo-button');    // кнопка запуска веб-камеры 
+const msgBoxPhotoBtn = document.querySelector('#photobtn');                     // кнопка запуска веб-камеры 
+const photoBtn = document.querySelector('.photo-button');                       // тег Label для связи с кнопкой запуска веб-камеры
 const takePhotoBtn = document.querySelector('.photo-box-app__controls');        // кнопка "сделать фото"
 
 const photoBox = document.querySelector('.photo-box');                          // окно воспроизведения видео с веб-камеры
@@ -300,7 +301,8 @@ function clickMsgBoxPhotoBtn(ev) {
 
     });
 
-  msgBoxPhotoBtn.removeEventListener('click', clickMsgBoxPhotoBtn);
+  msgBoxPhotoBtn.disabled = true;
+  photoBtn.classList.remove('photo-button_unlock');
 }
 
 
@@ -393,7 +395,8 @@ function closePhotoBox() {
     photo.parentElement.removeChild(photo);
   }
 
-  msgBoxPhotoBtn.addEventListener('click', clickMsgBoxPhotoBtn);
+  msgBoxPhotoBtn.disabled = false;
+  photoBtn.classList.add('photo-button_unlock');
 }
 
 
