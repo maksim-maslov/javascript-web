@@ -186,38 +186,39 @@ function addEventListenersControlElements() {
       element.classList.toggle('shared__content_hide');
     }    
   });
-
     
   const topSectionControlElement = document.querySelector('.top-section__control-element');
   topSectionControlElement.addEventListener('click', () => {
     optionsMenuItems.classList.toggle('options-menu_show');
   });
 
-  const userInfoMenuItem = document.querySelector('.options-menu__item_user-info');
-  userInfoMenuItem.addEventListener('click', () => toggleSidePanel(false));
-
-  const sharedFilesMenuItem = document.querySelector('.options-menu__item_shared-files');
-  sharedFilesMenuItem.addEventListener('click', () => toggleSidePanel(true));
-
-  const clearHistoryMenuItem = document.querySelector('.options-menu__item_clear-history');
-  clearHistoryMenuItem.addEventListener('click', clearHistory);
+  optionsMenuItems.addEventListener('click', addEventListenerMenuItem);
 
   msgBoxPhotoBtn.addEventListener('click', clickMsgBoxPhotoBtn);  
 }
 
 
-//Показывает и скрывает инфрмацию о пользователе
+//Обработчик события 'click' для элементов меню 
+//param ev - объект события MouseEvent
 //
 
-function toggleSidePanel(isShared) {
-  optionsMenuItems.classList.remove('options-menu_show');
-  if (isShared) {
-    sidePanel.classList.add('side-panel_show');
-    userInfoPanel.classList.remove('user-info-panel_show');
-  } else {
-    sidePanel.classList.remove('side-panel_show');
-    userInfoPanel.classList.add('user-info-panel_show');
-  }    
+function addEventListenerMenuItem(ev) {
+
+	optionsMenuItems.classList.remove('options-menu_show');
+	
+	if (ev.target.classList.contains('options-menu__item_user-info')) {
+		sidePanel.classList.remove('side-panel_show');
+  	userInfoPanel.classList.add('user-info-panel_show');  		
+	}
+
+	if (ev.target.classList.contains('options-menu__item_shared-files')) {
+		sidePanel.classList.add('side-panel_show');
+  	userInfoPanel.classList.remove('user-info-panel_show');
+	}
+
+	if (ev.target.classList.contains('options-menu__item_clear-history')) {
+		clearHistory();
+	} 
 }
 
 
