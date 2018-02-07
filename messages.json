@@ -216,7 +216,7 @@
         },
         {"message_sender_id":"13072",
         "timestamp_precise":"1515516705866",
-        "message_text":"fhdfghdjdg",      
+        "message_text":"",      
         "attachments":
           [
             {"type":"file",
@@ -227,7 +227,7 @@
         },
         {"message_sender_id":"10001",
         "timestamp_precise":"1515516705866",
-        "message_text":"sdfgsfsafgfdhdfgjdhjdhjdhj",      
+        "message_text":"",      
         "attachments":
           [
             {"type":"audio",
@@ -260,7 +260,7 @@
         },
         {"message_sender_id":"13072",
         "timestamp_precise":"1515516705866",
-        "message_text":"bndgfhjfghkglgk",      
+        "message_text":"",      
         "attachments":
           [
             {"type":"image",

@@ -6,8 +6,7 @@
 		"status":"Offline",
 		"last_message":
 			{"snippet":"sit amet veniam, quis nostrud",
-			"message_sender_id":"13071",
-			"timestamp_precise":"1515575746535"
+			"message_sender_id":"13071"
 			}
 		},		
 		{"user_id":"13072",
@@ -16,8 +15,7 @@
 		"status":"Offline",
 		"last_message":
 			{"snippet":"aliquip ex ea commodo ",
-			"message_sender_id":"10001",
-			"timestamp_precise":"1515575746535"
+			"message_sender_id":"10001"
 			}
 		},
 		{"user_id":"13073",
@@ -26,8 +24,7 @@
 		"status":"Offline",
 		"last_message":
 			{"snippet":"consectetur adipiscing elit",
-			"message_sender_id":"13073",
-			"timestamp_precise":"1515575746535"
+			"message_sender_id":"13073"
 			}
 		},
 		{"user_id":"13074",
@@ -36,8 +33,7 @@
 		"status":"Offline",
 		"last_message":
 			{"snippet":"exercitation ullamco laboris",
-			"message_sender_id":"13074",
-			"timestamp_precise":"1515575746535"
+			"message_sender_id":"13074"
 			}
 		},
 		{"user_id":"13075",
@@ -46,8 +42,7 @@
 		"status":"Offline",
 		"last_message":
 			{"snippet":"veniam, quis nostrud ",
-			"message_sender_id":"13075",
-			"timestamp_precise":"1515575746535"
+			"message_sender_id":"13075"
 			}
 		},
 		{"user_id":"13076",
@@ -56,8 +51,7 @@
 		"avatar_pic_link":"./files/avatar-pic6.jpg",
 		"last_message":
 			{"snippet":"do eiusmod tempor incididunt",
-			"message_sender_id":"13076",
-			"timestamp_precise":"1515575746535"
+			"message_sender_id":"13076"
 			}
 		}
 	]
