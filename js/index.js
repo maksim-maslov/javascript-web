@@ -1,7 +1,7 @@
 'use strict';
 
 const senderId = '10001';     // id пользователя
-const connections = {};    		// Массив WS-соединений
+const connections = {};        // Массив WS-соединений
 const attachmentsInfo = [];   // Массив c информацией о прикрепленных к сообщению файлах
 let videoStream = '';         // Медиапоток с веб-камеры
 
@@ -171,19 +171,19 @@ function init() {
   sharedPanel.addEventListener('click', ev => clickMedia(ev));
 
   presenter.addEventListener('click', ev => {
-  	if (ev.target.classList.contains('photo-item__img')) {
-	    presenter.querySelector('.presenter-top__pic').src = ev.target.src;
-  	}	    
-	});
+    if (ev.target.classList.contains('photo-item__img')) {
+      presenter.querySelector('.presenter-top__pic').src = ev.target.src;
+    }      
+  });
 
-	const presenterCloseBtn = document.querySelector('.presenter__closeBtn');
+  const presenterCloseBtn = document.querySelector('.presenter__closeBtn');
   presenterCloseBtn.addEventListener('click', ev => {
     const node = document.querySelector('.presenter__bottom');
     presenter.removeChild(node);
     presenter.classList.remove('presenter_show');
   });
 
-	player.addEventListener('playing', ev => {
+  player.addEventListener('playing', ev => {
     const currentTrack = document.querySelector(`[data-key="${ev.currentTarget.dataset.trackName}"]`);
     currentTrack.classList.add('audio-item__playstate_play');
   });
@@ -209,12 +209,12 @@ function init() {
 
 function clickMedia(ev) {
 
-	if (ev.target.classList.contains('photo-item__img')) {
-  	showViewierPhoto(ev);
-	}   
-	if (ev.target.classList.contains('audio-item__playstate')) {
-  	playAudio(ev);
-	} 
+  if (ev.target.classList.contains('photo-item__img')) {
+    showViewierPhoto(ev);
+  }   
+  if (ev.target.classList.contains('audio-item__playstate')) {
+    playAudio(ev);
+  } 
 }
 
 
@@ -240,23 +240,23 @@ function addEventListenersControls() {
   msgBoxPhotoBtn.addEventListener('click', clickMsgBoxPhotoBtn);  
 
   cancelBtn.addEventListener('click', ev => {
-	  photo.src = '';
-	  wrapPhoto.classList.add('videorecorder-app__photo_hide');
-	  wrapVideo.classList.remove('videorecorder-app__video_hide');
-	});
+    photo.src = '';
+    wrapPhoto.classList.add('videorecorder-app__photo_hide');
+    wrapVideo.classList.remove('videorecorder-app__video_hide');
+  });
 
-	okBtn.addEventListener('click', () => {
-	  const chatItems = document.querySelectorAll('.photo__item_chat');
-	  const attachmentsItems = document.querySelectorAll('.msg-box-attachments__item');
-	  const index = chatItems.length + Array.from(attachmentsItems).filter(el => el.textContent.search(/.png/) > 0).length  + 1;
-	  const filetype = 'image/png';            
-	  const fileName = `image${index}.png`;
-	  const urlBlob = photo.src;
+  okBtn.addEventListener('click', () => {
+    const chatItems = document.querySelectorAll('.photo__item_chat');
+    const attachmentsItems = document.querySelectorAll('.msg-box-attachments__item');
+    const index = chatItems.length + Array.from(attachmentsItems).filter(el => el.textContent.search(/.png/) > 0).length  + 1;
+    const filetype = 'image/png';            
+    const fileName = `image${index}.png`;
+    const urlBlob = photo.src;
 
-	  addAttacment(filetype, fileName, urlBlob);  
+    addAttacment(filetype, fileName, urlBlob);  
 
-	  closePhotoBox();              
-	}); 
+    closePhotoBox();              
+  }); 
 }
 
 
@@ -266,21 +266,21 @@ function addEventListenersControls() {
 
 function addEventListenerMenuItem(ev) {
 
-	optionsMenuItems.classList.remove('options-menu_show');
-	
-	if (ev.target.classList.contains('options-menu__item_user-info')) {
-		sharedPanel.classList.remove('side-panel_show');
-  	userInfoPanel.classList.add('user-info-panel_show');  		
-	}
+  optionsMenuItems.classList.remove('options-menu_show');
+  
+  if (ev.target.classList.contains('options-menu__item_user-info')) {
+    sharedPanel.classList.remove('side-panel_show');
+    userInfoPanel.classList.add('user-info-panel_show');      
+  }
 
-	if (ev.target.classList.contains('options-menu__item_shared-files')) {
-		sharedPanel.classList.add('side-panel_show');
-  	userInfoPanel.classList.remove('user-info-panel_show');
-	}
+  if (ev.target.classList.contains('options-menu__item_shared-files')) {
+    sharedPanel.classList.add('side-panel_show');
+    userInfoPanel.classList.remove('user-info-panel_show');
+  }
 
-	if (ev.target.classList.contains('options-menu__item_clear-history')) {
-		clearHistory();
-	} 
+  if (ev.target.classList.contains('options-menu__item_clear-history')) {
+    clearHistory();
+  } 
 }
 
 
@@ -363,12 +363,12 @@ function clickMsgBoxPhotoBtn(ev) {
 
 function takePhoto() {  
 
-	canvas.width = video.videoWidth;
+  canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   ctx.drawImage(video, 0, 0);
 
   canvas.toBlob(blob => {
-  	photo.src = URL.createObjectURL(blob);
+    photo.src = URL.createObjectURL(blob);
   });
   wrapPhoto.classList.remove('videorecorder-app__photo_hide');
   wrapVideo.classList.add('videorecorder-app__video_hide');
@@ -668,7 +668,7 @@ function addMessageChat(otherUserId, avatarPicture, messageSenderId, timestamp, 
   } 
 
   if (attachmentsMessage.length) {
-  	
+    
     const attachment = document.createElement('div');
     attachment.className = 'ch-msg-cnt__attachment';
     messageContent.appendChild(attachment);
@@ -680,14 +680,14 @@ function addMessageChat(otherUserId, avatarPicture, messageSenderId, timestamp, 
         const key = chatItems.length + index + 1;
         
         const audioChat = createAudio(el.link, el.file_name, key); 
-			  audioChat.className = 'audio__item audio__item_chat';
-			  audioChat.querySelector('.audio-item__playstate').dataset.key = key;
-			  attachment.appendChild(audioChat); 
-			  
-			  const audioShared = createAudio(el.link, el.file_name, key); 
-			  audioShared.className = 'audio__item audio__item_shared';  
-			  audioShared.querySelector('.audio-item__playstate').dataset.key = `${key}-s`;  
-			  sidePanelAudio.appendChild(audioShared);  
+        audioChat.className = 'audio__item audio__item_chat';
+        audioChat.querySelector('.audio-item__playstate').dataset.key = key;
+        attachment.appendChild(audioChat); 
+        
+        const audioShared = createAudio(el.link, el.file_name, key); 
+        audioShared.className = 'audio__item audio__item_shared';  
+        audioShared.querySelector('.audio-item__playstate').dataset.key = `${key}-s`;  
+        sidePanelAudio.appendChild(audioShared);  
 
       } else if (el.type.search(/image/) != -1) {   
 
@@ -696,18 +696,18 @@ function addMessageChat(otherUserId, avatarPicture, messageSenderId, timestamp, 
         attachment.appendChild(imgChat);
 
         const imgShared = createImage(el.link);
-			  imgShared.classList.add('photo__item_shared');
-			  sidePanelPhotos.appendChild(imgShared);
+        imgShared.classList.add('photo__item_shared');
+        sidePanelPhotos.appendChild(imgShared);
 
       } else {   
 
-      	const fileChat = createFile(el.link, el.file_name);
-			  fileChat.className = 'files__item files__item_chat';
-			  attachment.appendChild(fileChat);
+        const fileChat = createFile(el.link, el.file_name);
+        fileChat.className = 'files__item files__item_chat';
+        attachment.appendChild(fileChat);
 
-			  const fileShared = createFile(el.link, el.file_name);
-			  fileShared.className = 'files__item files__item_shared';
-			  sidePanelFiles.appendChild(fileShared);
+        const fileShared = createFile(el.link, el.file_name);
+        fileShared.className = 'files__item files__item_shared';
+        sidePanelFiles.appendChild(fileShared);
       }
 
     });          
@@ -837,7 +837,7 @@ function createText(messageText) {
 
 function createImage(ref) {  
 
-	const img = document.createElement('img');       
+  const img = document.createElement('img');       
   img.className = 'photo-item__img'; 
   img.src = ref;
 
@@ -955,15 +955,15 @@ function addAttacment(fileType, fileName, ref) {
   deleteBtn.className = 'msg-box-attachments-item__delete-icon';
 
   item.addEventListener('click', ev => {
-  	if (ev.target.classList.contains('msg-box-attachments-item__delete-icon')) {  		
-  		const removeElement = attachmentsInfo.findIndex(el => {
-	      return el.file_name == ev.currentTarget.querySelector('.msg-box-attachments-item__title').textContent;
-	    });
-	    URL.revokeObjectURL(attachmentsInfo[removeElement].link);
-	    attachmentsInfo.splice(removeElement, 1);
-	    attachments.removeChild(ev.currentTarget);
-	    disableSendBtn();
-  	}	    
+    if (ev.target.classList.contains('msg-box-attachments-item__delete-icon')) {      
+      const removeElement = attachmentsInfo.findIndex(el => {
+        return el.file_name == ev.currentTarget.querySelector('.msg-box-attachments-item__title').textContent;
+      });
+      URL.revokeObjectURL(attachmentsInfo[removeElement].link);
+      attachmentsInfo.splice(removeElement, 1);
+      attachments.removeChild(ev.currentTarget);
+      disableSendBtn();
+    }      
   });
 
   item.appendChild(deleteBtn);
