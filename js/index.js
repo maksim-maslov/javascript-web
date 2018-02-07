@@ -1,14 +1,14 @@
 'use strict';
 
-const senderId = '10001';  // id пользователя
-const connections = {};    // Массив WS-соединений
-const attachments = [];    // Массив, содержащий информацию о прикрепленных к сообщению файлах
-const videoStreams = [];   // Массив открытых медиапотоков с веб-камеры
+const senderId = '10001';     // id пользователя
+const connections = {};    		// Массив WS-соединений
+const attachmentsInfo = [];   // Массив c информацией о прикрепленных к сообщению файлах
+let videoStream = '';         // Медиапоток с веб-камеры
 
-const contactSection = document.querySelector('.contacts');                     // HTMLElement списка контактов
-const chatHistorySection = document.querySelector('.chat-history');             // HTMLElement истории сообщений
-const attachmentsSection = document.querySelector('.message-box__attachments'); // HTMLElement прикрепленных к сообщению файлов
-const sidePanel = document.querySelector('.side-panel');                        // HTMLElement боковой панели
+const contactList = document.querySelector('.contacts');                        // HTMLElement списка контактов
+const chatHistory = document.querySelector('.chat__history');                    // HTMLElement истории сообщений
+const attachments = document.querySelector('.message-box__attachments');        // HTMLElement прикрепленных к сообщению файлов
+const sharedPanel = document.querySelector('.side-panel');                      // HTMLElement боковой панели
 const userInfoPanel = document.querySelector('.user-info-panel');               // HTMLElement панели User Info
 
 const sidePanelFiles = document.querySelector('.shared__content_files');        // HTMLElement панели Shared Files
@@ -19,21 +19,27 @@ const textInput = document.querySelector('.message-box__input');                
 const submitBtn = document.querySelector('#submitbtn');                         // кнопка отправки сообщения
 const sendMsgBtn = document.querySelector('.submit-button');                    // тег Label для связи с кнопкой отправки сообщения
 const clipBtn = document.querySelector('#uploadbtn');                           // кнопка прикрепления файла к сообщению
-const msgBoxPhotoBtn = document.querySelector('#photobtn');                     // кнопка запуска веб-камеры 
-const photoBtn = document.querySelector('.photo-button');                       // тег Label для связи с кнопкой запуска веб-камеры
-const takePhotoBtn = document.querySelector('.photo-box-app__controls');        // кнопка "сделать фото"
+const msgBoxPhotoBtn = document.querySelector('#photobtn');                     // кнопка запуска видеорекордера 
+const photoBtn = document.querySelector('.photo-button');                       // тег Label для связи с кнопкой запуска видеорекордера
 
-const photoBox = document.querySelector('.photo-box');                          // окно воспроизведения видео с веб-камеры
-const app = document.querySelector('.photo-box__app');                          // окно управления фотосъёмкой
 
-const presentation = document.querySelector('.image-view-box');                 // просмотрщик файлов изображений
+const videorecorder = document.querySelector('.videorecorder');                 // видеорекордер
+const wrapVideo = document.querySelector('.videorecorder-app__video');          // оборачивающий тег для элементов видео
+const video = document.querySelector('.app__video');                            // тег video
+const takePhotoBtn = document.querySelector('.app__controls');                  // кнопка "снять фото"
+const canvas = document.querySelector('.app-photo__canvas');                    // тег canvas
+const ctx = canvas.getContext('2d');                                            // контекст canvas
+const wrapPhoto = document.querySelector('.videorecorder-app__photo');          // оборачивающий тег для элементов фото
+const photo = document.querySelector('.app-photo__img');                        // фото
+const cancelBtn = document.querySelector('.app-photo__cancelBtn');              // кнопка отмена
+const okBtn = document.querySelector('.app-photo__okBtn');                      // кнопка ok
+const closeBtnPhotoBox = document.querySelector('.videorecorder__closeBtn');    // кнопка закрытия окна видеорекордера
+
+const presenter = document.querySelector('.presenter');                         // просмотрщик изображений
 
 const optionsMenuItems = document.querySelector('.options-menu');               // меню опций
 
 const player = document.querySelector('.audioplayer');                          // аудиопроигрыватель
-
-const video = document.querySelector('video');                                  // тег video
-const closeBtnPhotoBox = document.querySelector('.photo-box__closeBtn');        // кнопка закрытия окна воспроизведения видео с веб-камеры
 
 
 //Получает данные
@@ -92,7 +98,7 @@ function updateJSONFile(url, data) {
     })
     .catch(error => {
       console.log(`Ошибка при обновлении файла "${url}": ${error}`);
-      rollbackContentContactItems();
+      clearLastMessage();
     });
 }
 
@@ -131,10 +137,13 @@ function setConnectionWS(activeContact) {
 //
 
 function updateStatusActiveContact(userId, status) {
+
   const activeContact = document.querySelector(`[data-user-id="${userId}"]`);
   activeContact.dataset.status = status;
-  const topSectionStatus = document.querySelector('.top-section-text__status');
+
+  const topSectionStatus = document.querySelector('.top-text__status');
   topSectionStatus.textContent = status;
+
   const userInfoPanelStatus = userInfoPanel.querySelector('.user-info-panel__status');
   userInfoPanelStatus.textContent = status;
 }
@@ -145,11 +154,9 @@ function updateStatusActiveContact(userId, status) {
 
 function init() {
 
-  addEventListenersControlElements();
+  addEventListenersControls();
   
-  textInput.addEventListener('input', () => {
-    disableSendBtn();
-  });
+  textInput.addEventListener('input', () => disableSendBtn());
 
   clipBtn.addEventListener('change', onSelectFiles);  
 
@@ -159,11 +166,32 @@ function init() {
 
   closeBtnPhotoBox.addEventListener('click', closePhotoBox);
 
-  const presentationCloseBtn = document.querySelector('.image-view-box__closeBtn');
-  presentationCloseBtn.addEventListener('click', ev => {
-    const presentationPhotosList = document.querySelector('.image-view-box__bottom');
-    presentation.removeChild(presentationPhotosList);
-    presentation.classList.remove('image-view-box_show');
+  chatHistory.addEventListener('click', ev => clickMedia(ev));  
+
+  sharedPanel.addEventListener('click', ev => clickMedia(ev));
+
+  presenter.addEventListener('click', ev => {
+  	if (ev.target.classList.contains('photo-item__img')) {
+	    presenter.querySelector('.presenter-top__pic').src = ev.target.src;
+  	}	    
+	});
+
+	const presenterCloseBtn = document.querySelector('.presenter__closeBtn');
+  presenterCloseBtn.addEventListener('click', ev => {
+    const node = document.querySelector('.presenter__bottom');
+    presenter.removeChild(node);
+    presenter.classList.remove('presenter_show');
+  });
+
+	player.addEventListener('playing', ev => {
+    const currentTrack = document.querySelector(`[data-key="${ev.currentTarget.dataset.trackName}"]`);
+    currentTrack.classList.add('audio-item__playstate_play');
+  });
+
+  player.addEventListener('pause', ev => {
+    const currentTrack = document.querySelector(`[data-key="${ev.currentTarget.dataset.trackName}"]`);
+    currentTrack.classList.remove('audio-item__playstate_play');
+    currentTrack.dataset.startTime = ev.currentTarget.currentTime;
   });
 
   loadData('./contacts.json')
@@ -176,19 +204,33 @@ function init() {
 }
 
 
+//Обработчик клика по фото или кнопке play
+//
+
+function clickMedia(ev) {
+
+	if (ev.target.classList.contains('photo-item__img')) {
+  	showViewierPhoto(ev);
+	}   
+	if (ev.target.classList.contains('audio-item__playstate')) {
+  	playAudio(ev);
+	} 
+}
+
+
 //Добавляет обработчики событий для меню опций и элементов скрывающих боковые панели
 //
   
-function addEventListenersControlElements() {
+function addEventListenersControls() {
 
-  sidePanel.addEventListener('click', ev => {
-    if (ev.target.classList.contains('shared-head__control-element')) {
-      const element = ev.target.parentElement.parentElement.querySelector('.shared__content');
+  sharedPanel.addEventListener('click', ev => {
+    if (ev.target.classList.contains('shared-head__control')) {
+      const element = ev.currentTarget.querySelector(`[data-testid="${ev.target.dataset.testId}"]`);
       element.classList.toggle('shared__content_hide');
     }    
   });
     
-  const topSectionControlElement = document.querySelector('.top-section__control-element');
+  const topSectionControlElement = document.querySelector('.top__control');
   topSectionControlElement.addEventListener('click', () => {
     optionsMenuItems.classList.toggle('options-menu_show');
   });
@@ -196,6 +238,25 @@ function addEventListenersControlElements() {
   optionsMenuItems.addEventListener('click', addEventListenerMenuItem);
 
   msgBoxPhotoBtn.addEventListener('click', clickMsgBoxPhotoBtn);  
+
+  cancelBtn.addEventListener('click', ev => {
+	  photo.src = '';
+	  wrapPhoto.classList.add('videorecorder-app__photo_hide');
+	  wrapVideo.classList.remove('videorecorder-app__video_hide');
+	});
+
+	okBtn.addEventListener('click', () => {
+	  const chatItems = document.querySelectorAll('.photo__item_chat');
+	  const attachmentsItems = document.querySelectorAll('.msg-box-attachments__item');
+	  const index = chatItems.length + Array.from(attachmentsItems).filter(el => el.textContent.search(/.png/) > 0).length  + 1;
+	  const filetype = 'image/png';            
+	  const fileName = `image${index}.png`;
+	  const urlBlob = photo.src;
+
+	  addAttacment(filetype, fileName, urlBlob);  
+
+	  closePhotoBox();              
+	}); 
 }
 
 
@@ -208,12 +269,12 @@ function addEventListenerMenuItem(ev) {
 	optionsMenuItems.classList.remove('options-menu_show');
 	
 	if (ev.target.classList.contains('options-menu__item_user-info')) {
-		sidePanel.classList.remove('side-panel_show');
+		sharedPanel.classList.remove('side-panel_show');
   	userInfoPanel.classList.add('user-info-panel_show');  		
 	}
 
 	if (ev.target.classList.contains('options-menu__item_shared-files')) {
-		sidePanel.classList.add('side-panel_show');
+		sharedPanel.classList.add('side-panel_show');
   	userInfoPanel.classList.remove('user-info-panel_show');
 	}
 
@@ -236,7 +297,7 @@ function clearHistory() {
   player.pause();
   player.controls = false;  
 
-  chatHistorySection.textContent = '';
+  chatHistory.textContent = '';
   sidePanelFiles.textContent = '';
   sidePanelAudio.textContent = '';
   sidePanelPhotos.textContent = '';   
@@ -272,10 +333,7 @@ function clearHistory() {
 
 function onSelectFiles(ev) {
   const files = Array.from(ev.target.files);
-  files.forEach(file => {
-    const fileType = 
-    addAttacmentsItem(file.type, file.name, URL.createObjectURL(file));      
-  });
+  files.forEach(file => addAttacment(file.type, file.name, URL.createObjectURL(file)));
 }
 
 
@@ -286,19 +344,13 @@ function onSelectFiles(ev) {
 function clickMsgBoxPhotoBtn(ev) {
   
   ev.preventDefault();
-  photoBox.classList.add('photo-box_show');
+  videorecorder.classList.add('videorecorder_show');
 
   navigator.mediaDevices
     .getUserMedia({video: true, audio: false})
-    .then(stream => {
-      
-      video.src = URL.createObjectURL(stream);
-
-      video.style.display = 'block';
-      takePhotoBtn.style.display = 'block';
-     
-      videoStreams.push(stream);
-
+    .then(stream => {      
+      video.src = URL.createObjectURL(stream);     
+      videoStream = stream;
     });
 
   msgBoxPhotoBtn.disabled = true;
@@ -306,73 +358,20 @@ function clickMsgBoxPhotoBtn(ev) {
 }
 
 
-//Создает фото с веб-камеры
+// Создает снимок с веб-камеры
 //
 
 function takePhoto() {  
-  
-  const video = document.createElement('video');
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d'); 
 
-  navigator.mediaDevices
-    .getUserMedia({video: true, audio: false})
-    .then(stream => {  
-      video.src = URL.createObjectURL(stream);
-      videoStreams.push(stream);
+	canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  ctx.drawImage(video, 0, 0);
 
-      video.addEventListener('canplay', () => {
-        setTimeout(() => {          
-          
-          const fragment = document.createDocumentFragment();          
-
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          ctx.drawImage(video, 0, 0);  
-
-          const urlBlob = canvas.toDataURL();  
-
-          const photo = document.createElement('div'); 
-          photo.className = 'photo-box-app__photo';
-          fragment.appendChild(photo);
-
-          const img = document.createElement('img'); 
-          img.style.height = '291px';         
-          img.src = urlBlob;
-                  
-          photo.appendChild(img); 
-
-          const cancelBtn = document.createElement('div');
-          cancelBtn.className = 'photo-box-app__cancelBtn';
-          cancelBtn.addEventListener('click', ev => {
-            ev.currentTarget.parentElement.parentElement.removeChild(ev.currentTarget.parentElement);
-            document.querySelector('video').style.display = 'block';
-            takePhotoBtn.style.display = 'block';
-          });
-          photo.appendChild(cancelBtn);           
-
-          const okBtn = document.createElement('div');
-          okBtn.className = 'photo-box-app__okBtn';
-          okBtn.addEventListener('click', () => {
-            const chatItems = document.querySelectorAll('.photo__item_chat');
-            const attachmentsItems = document.querySelectorAll('.msg-box-attachments__item');
-            const index = chatItems.length + Array.from(attachmentsItems).filter(el => el.textContent.search(/.png/) > 0).length  + 1;
-            const filetype = 'image/png';            
-            const fileName = `image${index}.png`;
-
-            addAttacmentsItem(filetype, fileName, urlBlob);  
-   
-            closePhotoBox();              
-          });         
-          photo.appendChild(okBtn);                     
-
-          document.querySelector('video').style.display = 'none';
-          takePhotoBtn.style.display = 'none';
-          app.insertBefore(fragment, app.firstElementChild);
-          
-        }, 100);
-      }); 
-    });  
+  canvas.toBlob(blob => {
+  	photo.src = URL.createObjectURL(blob);
+  });
+  wrapPhoto.classList.remove('videorecorder-app__photo_hide');
+  wrapVideo.classList.add('videorecorder-app__video_hide');
 }
 
 
@@ -381,29 +380,25 @@ function takePhoto() {
 
 function closePhotoBox() {
 
-  photoBox.classList.remove('photo-box_show');
+  videorecorder.classList.remove('videorecorder_show');
   
-  videoStreams.forEach(el => {
-    el.getVideoTracks().map(track => track.stop());
-  });
+  videoStream.getVideoTracks().map(track => track.stop());
 
   URL.revokeObjectURL(video.src);
 
-  const photo = app.querySelector('.photo-box-app__photo');
-  
-  if (photo) {
-    photo.parentElement.removeChild(photo);
-  }
+  photo.src = '';
+  wrapPhoto.classList.add('videorecorder-app__photo_hide');
+  wrapVideo.classList.remove('videorecorder-app__video_hide');
 
   msgBoxPhotoBtn.disabled = false;
   photoBtn.classList.add('photo-button_unlock');
 }
 
 
-//Производит откат текста последнего сообщения в HTMLElement из списка контактов
+//Удаляет текст последнего сообщения в списке контактов
 //
 
-function rollbackContentContactItems() {
+function clearLastMessage() {
 
   const contactsJSON = JSON.parse(localStorage.contactsJSONInit);
   localStorage.contactsJSON = JSON.stringify(contactsJSON);
@@ -462,7 +457,7 @@ function createContactsSection() {
     return memo;
     }, document.createDocumentFragment());   
 
-  contactSection.appendChild(fragment); 
+  contactList.appendChild(fragment); 
 
   addEventListenersContactItems();
 }
@@ -472,14 +467,13 @@ function createContactsSection() {
 //
 
 function addEventListenersContactItems() {
+
   const contactItems = document.querySelectorAll('.contacts__item');
 
   Array.from(contactItems).forEach(el => {
     el.addEventListener('click', ev => {
-      const messagesJSON = JSON.parse(localStorage.messagesJSON);        
-      const contactsJSON = JSON.parse(localStorage.contactsJSON);      
-      updateJSONFile('./contacts.json', JSON.stringify(contactsJSON));      
-      updateJSONFile('./messages.json', JSON.stringify(messagesJSON));      
+      updateJSONFile('./contacts.json', localStorage.contactsJSON);      
+      updateJSONFile('./messages.json', localStorage.messagesJSON);      
       const activeContact = ev.currentTarget;
       createChatHistoryInit(activeContact);
     });
@@ -500,15 +494,15 @@ function createChatHistoryInit(activeContact) {
   Array.from(contactItems).forEach(el => {el.classList.remove('contacts__item_active')});
   activeContact.classList.add('contacts__item_active');
 
-  chatHistorySection.textContent = '';
+  chatHistory.textContent = '';
   sidePanelFiles.textContent = '';
   sidePanelAudio.textContent = '';
   sidePanelPhotos.textContent = '';
   clearAttacments();
 
-  const topSectionTextName = document.querySelector('.top-section-text__name');
+  const topSectionTextName = document.querySelector('.top-text__name');
   topSectionTextName.textContent = activeContact.querySelector('.contact-item-text__name').textContent;
-  const topSectionStatus = document.querySelector('.top-section-text__status');
+  const topSectionStatus = document.querySelector('.top-text__status');
   topSectionStatus.textContent = activeContact.dataset.status;
 
   const avatar = userInfoPanel.querySelector('.avatar__pic');
@@ -547,8 +541,7 @@ function createChatHistory(activeContact) {
       const messageText = el.message_text;
       const attachmentsMessage = el.attachments;      
       addMessageChat(otherUserId, avatarPic, messageSenderId, timestamp, messageText, attachmentsMessage);  
-    }); 
-   
+    });    
   }   
 
   scrollDown();
@@ -572,7 +565,7 @@ function sendMessage(ev) {
   const messageSenderId = senderId;
   const timestamp = Date.now();
   const messageText = textInput.value;
-  const attachmentsMessage = attachments; 
+  const attachmentsMessage = attachmentsInfo; 
 
   addMessageChat(otherUserId, avatar, messageSenderId, timestamp, messageText, attachmentsMessage);
 
@@ -649,15 +642,17 @@ function addMessageChat(otherUserId, avatarPicture, messageSenderId, timestamp, 
   message.title = date.toLocaleString('ru-Ru');
   
   if (messageSenderId == otherUserId) {
+
     message.classList.add('chat-history__message_left');
+
     const avatar = document.createElement('div');
     avatar.className = 'ch-message__avatar';
     message.appendChild(avatar);
 
     const avatarPic = document.createElement('img');
-    avatarPic.className = 'avatar__pic';  
-    avatarPic.src = avatarPicture;   
-    avatar.appendChild(avatarPic); 
+    avatarPic.className = 'avatar__pic';
+    avatarPic.src = avatarPicture;
+    avatar.appendChild(avatarPic);
 
   } else {
     message.classList.add('chat-history__message_right');
@@ -668,29 +663,57 @@ function addMessageChat(otherUserId, avatarPicture, messageSenderId, timestamp, 
   message.appendChild(messageContent);
 
   if (messageText) {
-    addElementText(messageContent, messageText);        
+    const text = createText(messageText);  
+    messageContent.appendChild(text);      
   } 
 
   if (attachmentsMessage.length) {
+  	
     const attachment = document.createElement('div');
     attachment.className = 'ch-msg-cnt__attachment';
     messageContent.appendChild(attachment);
     attachmentsMessage.forEach((el, index) => { 
 
       if (el.type.search(/audio/) != -1) {
+
         const chatItems = document.querySelectorAll('.audio__item_chat');
         const key = chatItems.length + index + 1;
-        addElementAudio(attachment, el.link, el.file_name, key);                 
-      } else if (el.type.search(/image/) != -1) {
-        addElementImage(attachment, el.link);
+        
+        const audioChat = createAudio(el.link, el.file_name, key); 
+			  audioChat.className = 'audio__item audio__item_chat';
+			  audioChat.querySelector('.audio-item__playstate').dataset.key = key;
+			  attachment.appendChild(audioChat); 
+			  
+			  const audioShared = createAudio(el.link, el.file_name, key); 
+			  audioShared.className = 'audio__item audio__item_shared';  
+			  audioShared.querySelector('.audio-item__playstate').dataset.key = `${key}-s`;  
+			  sidePanelAudio.appendChild(audioShared);  
+
+      } else if (el.type.search(/image/) != -1) {   
+
+        const imgChat = createImage(el.link);
+        imgChat.classList.add('photo__item_chat');
+        attachment.appendChild(imgChat);
+
+        const imgShared = createImage(el.link);
+			  imgShared.classList.add('photo__item_shared');
+			  sidePanelPhotos.appendChild(imgShared);
+
       } else {   
-        addElementFile(attachment, el.link, el.file_name);
+
+      	const fileChat = createFile(el.link, el.file_name);
+			  fileChat.className = 'files__item files__item_chat';
+			  attachment.appendChild(fileChat);
+
+			  const fileShared = createFile(el.link, el.file_name);
+			  fileShared.className = 'files__item files__item_shared';
+			  sidePanelFiles.appendChild(fileShared);
       }
 
     });          
   }
 
-  chatHistorySection.appendChild(message);
+  chatHistory.appendChild(message);
 } 
 
 
@@ -715,8 +738,8 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
       message.message_text = messageText;
       message.attachments = [];
 
-      if (attachments.length) {
-        const attachmentMessage = attachments.forEach(element => {
+      if (attachmentsInfo.length) {
+        const attachmentMessage = attachmentsInfo.forEach(element => {
           const statusSend = sendAttacment(element);
           if (!statusSend) {
             message.attachments.push({type: element.type, file_name: element.file_name, link: `./files/${element.file_name}`});
@@ -746,15 +769,14 @@ function addMessageLocalStorage(otherUserId, messageSenderId, timestamp, message
   scrollDown();
 
   localStorage.messagesJSON = JSON.stringify(messagesJSON);
-  // localStorage.contactsJSON = JSON.stringify(contactsJSON);
 }
 
 
-//Автоматически скроллит чат
+//Cкроллит чат
 //
 
 function scrollDown() {
-  const timerId = setInterval(() => {chatHistorySection.scrollTop += 500}, 10);    
+  const timerId = setInterval(() => {chatHistory.scrollTop += 500}, 10);    
   setTimeout(() => clearInterval(timerId), 500);
 }
 
@@ -795,64 +817,35 @@ function sendAttacment(attachment) {
 }
 
 
-//Добавляет текст сообщения в HTMLElement чата
-//param parentElement - HTMLElement, в который будет помещен созданный элемент
-//param text - текст сообщения
+//Создает HTMLElement с текстом сообщения
+//param messageText - текст сообщения
+//return text - созданный HTMLElement
 //
 
-function addElementText(parentElement, text) {
-  const messageText = document.createElement('div');
-  messageText.className = 'ch-msg-cnt__text';
-  messageText.textContent = text;
-  parentElement.appendChild(messageText);
+function createText(messageText) {
+  const item = document.createElement('div');
+  item.className = 'ch-msg-cnt__text';
+  item.textContent = messageText;
+  return item;
 }
 
 
-//Добавляет файл в HTMLElement чата и на боковую панель
-//param parentElement - HTMLElement, в который будет помещен созданный элемент
-//param ref - ссылка на файл
-//param fileName - имя файла
-//
-
-function addElementFile(parentElement, ref, fileName) {
-  const itemChat = createElementFile(ref, fileName);
-  itemChat.className = 'files__item files__item_chat';
-  parentElement.appendChild(itemChat);
-  const itemShared = createElementFile(ref, fileName);
-  itemShared.className = 'files__item files__item_shared';
-  sidePanelFiles.appendChild(itemShared);
-}   
-
-
-//Добавляет аудиофайл в HTMLElement чата и на боковую панель
-//param parentElement - HTMLElement, в который будет помещен созданный элемент
-//param ref - ссылка на аудиофайл
-//param fileName - имя аудиофайла
-//param key = ключ для обозначения уникальности аудиофайлов в окне браузера
-//
-
-function addElementAudio(parentElement, ref, fileName, key) {
-  const itemChat = createElementAudio(ref, fileName, key); 
-  itemChat.className = 'audio__item audio__item_chat';
-  itemChat.querySelector('.audio-item__playstate').dataset.key = key;
-  parentElement.appendChild(itemChat); 
-  const itemShared = createElementAudio(ref, fileName, key); 
-  itemShared.className = 'audio__item audio__item_shared';  
-  itemShared.querySelector('.audio-item__playstate').dataset.key = `${key}-s`;  
-  sidePanelAudio.appendChild(itemShared);
-}
-
-
-//Добавляет файл изображения в HTMLElement чата и на боковую панель
-//param parentElement - HTMLElement, в который будет помещен созданный элемент
+//Создает HTMLElement img
 //param ref - ссылка на файл изображения
+//return item - созданный HTMLElement
 //
 
-function addElementImage(parentElement, ref) {  
-  createElementImageChat(parentElement, ref);    
-  const itemShared = createElementImageSidePanel(ref);
-  itemShared.className = 'photos__item photos__item_shared'; 
-  sidePanelPhotos.appendChild(itemShared);
+function createImage(ref) {  
+
+	const img = document.createElement('img');       
+  img.className = 'photo-item__img'; 
+  img.src = ref;
+
+  const item = document.createElement('div');       
+  item.className = 'photo__item'; 
+  item.appendChild(img);
+
+  return item;
 } 
 
 
@@ -862,7 +855,7 @@ function addElementImage(parentElement, ref) {
 //return item - созданный HTMLElement
 //
 
-function createElementFile(ref, fileName) {
+function createFile(ref, fileName) {
 
   const item = document.createElement('div');   
   const icon = document.createElement('div');
@@ -880,26 +873,24 @@ function createElementFile(ref, fileName) {
 }
 
 
-//Создает HTMLElement для аудиофайла в чат
+//Создает HTMLElement для аудиофайла
 //param ref - ссылка на аудиофайл
 //param fileName - имя аудиофайла
 //return item - созданный HTMLElement
 //
 
-function createElementAudio(ref, fileName) {
+function createAudio(ref, fileName) {
 
   const item = document.createElement('div');             
   const playBtn = document.createElement('div');
   playBtn.className = 'audio-item__play-button';   
   item.appendChild(playBtn);
 
-  const refEl = document.createElement('a');
-  refEl.className = 'audio-item__playstate'; 
-  refEl.href = ref;
+  const a = document.createElement('a');
+  a.className = 'audio-item__playstate'; 
+  a.href = ref;
 
-  addEventListenerAudio(refEl);
-
-  item.appendChild(refEl);
+  playBtn.appendChild(a);
 
   const title = document.createElement('div');
   title.className = 'audio-item__title'; 
@@ -907,102 +898,37 @@ function createElementAudio(ref, fileName) {
   item.appendChild(title);
 
   return item;
-}  
+} 
 
 
-//Создает HTMLElement для файла изображения в чат
-//param parentElement - HTMLElement, в который будет помещен созданный элемент
-//param ref - ссылка на файл изображения
+//Добавляет обработчик события на кнопку play
+//param ev - объект события MouseEvent
 //
 
-function createElementImageChat(parentElement, ref) {
+function playAudio(ev) {
+
+  ev.preventDefault();
   
-  const item = document.createElement('img');       
-  item.className = 'photo__item'; 
-  item.classList.add('photo__item_chat')
-  item.src = ref;
-
-  item.addEventListener('click', ev => {
-    const isChat = true;
-    showViewierPhoto(ev, isChat);
-  });
-
-  parentElement.appendChild(item);
-}
-
-
-//Создает HTMLElement для файла изображения на боковую панель
-//param ref - ссылка на файл изображения
-//return item - созданный HTMLElement
-//
-
-function createElementImageSidePanel(ref) {
-
-  const item = document.createElement('div');  
-  const link = document.createElement('a');       
-  link.className = 'photos-item__link'; 
-  link.href = ref;
-  item.appendChild(link);
-
-  const img = document.createElement('img');       
-  img.className = 'photos-item__pic'; 
-  img.src = ref;
-  link.appendChild(img);
-
-  const overlay = document.createElement('div');       
-  overlay.className = 'photos-item__overlay'; 
-  link.appendChild(overlay);  
-
-  overlay.addEventListener('click', ev => {
-    const isChat = false;
-    showViewierPhoto(ev, isChat);
-  });
-
-  return item;
-}
-
-
-//Добавляет обработчик события на кнопку воспроизведения аудиофайла
-//param item - HTMLElement кнопки
-//
-
-function addEventListenerAudio(item) {
-
-  item.addEventListener('click', ev => {
-    ev.preventDefault();
+  if (!ev.target.dataset.startTime) {
+    ev.target.dataset.startTime = 0;
+  }
     
-    if (!ev.currentTarget.dataset.startTime) {
-      ev.currentTarget.dataset.startTime = 0;
-    }
-      
-    if (ev.currentTarget.classList.contains('audio-item__playstate_play')) {
-      player.pause();
-    } else {
-      player.src = ev.currentTarget.href;
-      player.dataset.trackName = ev.currentTarget.dataset.key;
-      player.currentTime = ev.currentTarget.dataset.startTime;  
-      player.play();
-      player.controls = true;  
+  if (ev.target.classList.contains('audio-item__playstate_play')) {
+    player.pause();
+  } else {
+    player.src = ev.target.href;
+    player.dataset.trackName = ev.target.dataset.key;
+    player.currentTime = ev.target.dataset.startTime;  
+    player.play();
+    player.controls = true;  
 
-      const playBtns = document.querySelectorAll('.audio-item__playstate');
-      
-      Array.from(playBtns).forEach(el => {
-        el.classList.remove('audio-item__playstate_play');
-        el.dataset.startTime = 0;
-      });    
-    }
-  });
-
-  player.addEventListener('playing', ev => {
-    const currentTrack = document.querySelector(`[data-key="${ev.currentTarget.dataset.trackName}"]`);
-    currentTrack.classList.add('audio-item__playstate_play');
-  });
-
-  player.addEventListener('pause', ev => {
-    const currentTrack = document.querySelector(`[data-key="${ev.currentTarget.dataset.trackName}"]`);
-    currentTrack.classList.remove('audio-item__playstate_play');
-    currentTrack.dataset.startTime = ev.currentTarget.currentTime;
-  });
+    const playBtns = document.querySelectorAll('.audio-item__playstate');
+    
+    Array.from(playBtns).forEach(el => {
+      el.classList.remove('audio-item__playstate_play');
+      el.dataset.startTime = 0;
+    });    
+  }
 }
 
 
@@ -1012,30 +938,32 @@ function addEventListenerAudio(item) {
 //param ref - ссылка на файл
 //
 
-function addAttacmentsItem(fileType, fileName, ref) {
+function addAttacment(fileType, fileName, ref) {
   
   const item = document.createElement('div');
   item.className = 'msg-box-attachments__item';
-  attachmentsSection.appendChild(item);
+  attachments.appendChild(item);
 
   const title = document.createElement('div');
-  title.className = 'msg-box-attachments-item__text';
+  title.className = 'msg-box-attachments-item__title';
   title.textContent = fileName;
   item.appendChild(title);    
 
-  attachments.push({type: fileType, file_name: fileName, link: ref});
+  attachmentsInfo.push({type: fileType, file_name: fileName, link: ref});
 
   const deleteBtn = document.createElement('div');
   deleteBtn.className = 'msg-box-attachments-item__delete-icon';
 
-  deleteBtn.addEventListener('click', ev => {
-    const removeElement = attachments.findIndex(el => {
-      return el.file_name == ev.target.parentElement.querySelector('.msg-box-attachments-item__text').textContent
-    });
-    
-    attachments.splice(removeElement, 1);
-    attachmentsSection.removeChild(ev.target.parentElement);
-    disableSendBtn();
+  item.addEventListener('click', ev => {
+  	if (ev.target.classList.contains('msg-box-attachments-item__delete-icon')) {  		
+  		const removeElement = attachmentsInfo.findIndex(el => {
+	      return el.file_name == ev.currentTarget.querySelector('.msg-box-attachments-item__title').textContent;
+	    });
+	    URL.revokeObjectURL(attachmentsInfo[removeElement].link);
+	    attachmentsInfo.splice(removeElement, 1);
+	    attachments.removeChild(ev.currentTarget);
+	    disableSendBtn();
+  	}	    
   });
 
   item.appendChild(deleteBtn);
@@ -1044,43 +972,36 @@ function addAttacmentsItem(fileType, fileName, ref) {
 }
 
 
-//Очищает массив прикрепленных к сообщению файлов
+//Удаляет информацию о прикрепленных к сообщению файлах
 //
 
 function clearAttacments() {
-  attachments.splice(0, attachments.length);
-  attachmentsSection.textContent = '';
+  attachmentsInfo.splice(0, attachmentsInfo.length);
+  attachments.textContent = '';
 }
 
 
-//Отображает просмотрщик файлов изображений
+//Показывает просмотрщик фото
 //ev - объект события MouseEvent
-//isChat - чат или боковая панель
 //
 
-function showViewierPhoto(ev, isChat) {
+function showViewierPhoto(ev) {
 
   ev.preventDefault();
-  presentation.classList.add('image-view-box_show');
-  presentation.querySelector('.image-view-box-top__pic').src = isChat
-  ? ev.currentTarget.src
-  : ev.currentTarget.previousElementSibling.src;
+  presenter.classList.add('presenter_show');
+  presenter.querySelector('.presenter-top__pic').src = ev.target.src;
 
-  const photos = sidePanelPhotos.cloneNode(true);
-  photos.classList.remove('shared__content_photos');
-  photos.classList.remove('shared__content');
-  photos.classList.add('image-view-box__bottom');
-  presentation.appendChild(photos);
+  const node = sidePanelPhotos.cloneNode(true);
+  node.classList.remove('shared__content_photos');
+  node.classList.remove('shared__content');
+  node.classList.add('presenter__bottom');
+  presenter.appendChild(node);
 
-  const photoList = document.querySelectorAll('.image-view-box__bottom .photos__item');
+  const items = document.querySelectorAll('.presenter .photo__item');
   
-  Array.from(photoList).forEach(el => {      
-    el.classList.remove('photos__item_shared');
-    el.classList.add('photos__item_view-box');      
-    el.firstElementChild.addEventListener('click', ev => {
-      ev.preventDefault();
-      presentation.querySelector('.image-view-box-top__pic').src = ev.target.previousElementSibling.src;
-    });
+  Array.from(items).forEach(el => {
+    el.classList.remove('photo__item_shared');
+    el.classList.add('photo__item_presenter');  
   });
 }  
 
@@ -1089,7 +1010,7 @@ function showViewierPhoto(ev, isChat) {
 //
 
 function disableSendBtn() {
-  if (!textInput.value && !attachments.length) {
+  if (!textInput.value && !attachmentsInfo.length) {
     submitBtn.disabled = true;
     sendMsgBtn.classList.remove('submit-button_unlock');
   } else {

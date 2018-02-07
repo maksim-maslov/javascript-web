@@ -96,14 +96,14 @@ body {
 
 
 
-.right-section {
+.wrap {
   height: 100%;
   padding: 0;
 }
 
 
 
-.top-section {
+.top {
   height: 50px;
   padding-top: 5px;
   padding-right: 20px;
@@ -111,21 +111,21 @@ body {
   border-bottom: 1px solid rgba(0, 0, 0, 0.10);
 }
 
-.top-section__text {
+.top__text {
   display: inline-block;  
 }
 
-.top-section-text__name {
+.top-text__name {
   font: 14px Roboto;
   color: rgba(0, 0, 0, 0.8);
 }
 
-.top-section-text__status {
+.top-text__status {
   font: 11px Roboto;
   color: rgba(0, 0, 0, 0.4);
 }
 
-.top-section__control-element {  
+.top__control {  
   display: inline-block;
   float: right;
   margin-top: 10px;
@@ -137,21 +137,21 @@ body {
   opacity: 0.8;
 }
 
-.top-section__control-element:hover {
+.top__control:hover {
   opacity: 1;
   transition: opacity 0.25s ease-in-out;
 }
 
 
 
-.middle-section {
+.chat-wrap {
   height: 589px;
   padding: 0;
 }
 
 
 
-.chat-section {
+.chat {
   height: 100%;
   padding: 0;
   border-right: 1px solid rgba(0, 0, 0, 0.10); 
@@ -159,7 +159,7 @@ body {
 
 
 
-.chat-history {
+.chat__history {
   height: 508px;
   padding-top: 20px;
   padding-bottom: 20px;
@@ -215,12 +215,19 @@ body {
   margin: 2px auto;
 }
 
+.photo__item {
+  cursor: pointer;
+  overflow: hidden
+}
+
 .photo__item_chat {
   width: 100%;
-  height: 100%;
   border-radius: 5px;
-  margin-bottom: 5px;
-  cursor: pointer;
+  margin-bottom: 5px;  
+}
+
+.photo-item__img {
+  width: 100%;
 }
 
 .files__item_chat {
@@ -235,7 +242,7 @@ body {
 
 
 
-.send-message-section {
+.chat__message-box {
   padding-top: 10px;
   height: 50px;
   border-top: 1px solid rgba(0, 0, 0, 0.10);
@@ -251,7 +258,7 @@ body {
   padding: 4px 10px;
 }
 
-.msg-box-attachments-item__text {
+.msg-box-attachments-item__title {
   display: inline-block;
   font: 11px Roboto; 
   color: rgba(0, 0, 0, 0.4);
@@ -448,14 +455,14 @@ body {
   padding: 10px 15px;
 }
 
-.shared-head__text {
+.shared-head__title {
   display: inline-block;
   color: rgba(0, 0, 0, 0.4);
   font: 14px Roboto;
   vertical-align: bottom;
 }
 
-.shared-head__control-element {
+.shared-head__control {
   display: inline-block;
   float: right;
   width: 16px;
@@ -585,38 +592,14 @@ body {
   font-size: 0px;
 }
 
-.photos__item_shared {
-  position: relative;
+
+.photo__item_shared {
   display: inline-block;
-  vertical-align: top;
   width: 78px;
   height: 78px;      
   margin-right: 2px;
   margin-bottom: 2px;
-  cursor: pointer;
-  overflow: hidden;
 }
-
-
-.photos-item__pic {
-  height: 100%;
-}
-
-.photos-item__overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;            
-  z-index: 5;
-  display: none;
-  background: rgba(255, 255, 255, 0.15);             
-}
-
-.photos__item_shared:hover .photos-item__overlay {
-  display: block;
-}
-
 
 
 .audioplayer {
@@ -624,7 +607,6 @@ body {
   top: 10px;
   right: 80px;
 }
-
 
 
 .options-menu {
@@ -663,14 +645,13 @@ body {
 }
 
 
-
-.photo-box {
+.videorecorder {
   position: absolute;
   top: 100px;
   left: 0;
   right: 0;
-  width: 394px;
-  height: 297px;
+  width: 406px;
+  height: 306px;
   left: 50%; 
   margin-left: -200px;
   background-clip: padding-box;
@@ -682,30 +663,11 @@ body {
   padding: 2px;
 }
 
-.photo-box_show {
+.videorecorder_show {
   visibility: visible;
 }
 
-.photo-box__app {
-  width: 100%;
-  position: relative;
-  margin-top: -34px;
-  text-align: center;
-}
-
-.photo-box-app__video {
-  display: none;
-}
-
-.photo-box-app__controls {
-  display: none;
-}
-
-.photo-box-app__image {
-  display: block;
-}
-
-.photo-box-app__cancelBtn {
+.app-photo__cancelBtn {
   display: inline-block;
   width: 32px;
   height: 32px;
@@ -718,7 +680,51 @@ body {
   margin-top: -40px;
 }
 
-.photo-box-app__okBtn {
+.videorecorder__app {
+  margin-top: -34px;
+  text-align: center;
+}
+
+.videorecorder-app__video {
+  height: 300px;
+}
+
+.videorecorder-app__video_hide {
+  display: none;
+}
+
+.app__video {
+  height: 300px;
+}
+
+.app__controls {
+  margin-top: -80px;
+}
+
+#take-photo {
+  border-radius: 50%;
+  color: #fff;
+  background-color: #111;
+  text-decoration: none;
+  padding: 15px;
+  line-height: 0;
+  opacity: 0.7;
+  outline: none;
+}
+
+.videorecorder-app__photo {
+  height: 300px;
+}
+
+.videorecorder-app__photo_hide {
+  display: none;
+}
+
+.app-photo__img {
+  height: 100%;
+}
+
+.app-photo__okBtn {
   display: inline-block;
   width: 32px;
   height: 32px;
@@ -730,7 +736,11 @@ body {
   margin-top: -40px;
 }
 
-.photo-box__closeBtn {
+.app-photo__canvas {
+  display: none;
+}
+
+.videorecorder__closeBtn {
   display: block;
   width: 24px;
   height: 24px;
@@ -747,32 +757,7 @@ body {
 }
 
 
-.photo-box__app video {
-  width: 100%;
-}
-
-.photo-box-app__controls {
-  position: relative;
-  margin-top: -80px;
-}
-
-.photo-box-app__controls button {
-  border-radius: 50%;
-  color: #fff;
-  background-color: #111;
-  text-decoration: none;
-  padding: 15px;
-  line-height: 0;
-  opacity: 0.7;
-  outline: none;
-  /*-webkit-tap-highlight-color: transparent;*/
-}
-
-.photo-box__app canvas {
-  display: none;
-}
-
-.image-view-box {
+.presenter {
   position: absolute;
   top: 0;
   left: 0;
@@ -784,13 +769,13 @@ body {
   text-align: center;
 }
 
-.image-view-box_show {
+.presenter_show {
   opacity: 1;
   transition: opacity 0.7s ease-in-out;
   visibility: visible;
 }
 
-.image-view-box__closeBtn {
+.presenter__closeBtn {
   display: block;
   width: 24px;
   height: 24px;
@@ -806,7 +791,7 @@ body {
   z-index: 5;
 }
 
-.image-view-box__top {
+.presenter__top {
   position: relative;
   height: 85%;
   margin: 0 auto;
@@ -815,29 +800,23 @@ body {
   padding: 0;
 }
 
-.image-view-box-top__pic {
+.presenter-top__pic {
   display: inline-block;
   max-height: 100%;
   vertical-align: middle;  
 }
 
-.image-view-box__bottom {
+.presenter__bottom {
   height: 15%; 
   padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.10);
 }
 
-.photos__item_view-box {
+.photo__item_presenter {
   position: relative;
   display: inline-block;
   vertical-align: top;
   width: 78px;
   height: 78px;      
   margin-right: 2px;
-  cursor: pointer;
-  overflow: hidden;
-}
-
-.photos__item_view-box:hover .photos-item__overlay {
-  display: block;
 }

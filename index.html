@@ -11,19 +11,19 @@
   <div class="row">
     <div class="col-lg-3 contacts scroll">
     </div>      
-    <div class="col-lg-9 right-section">
-      <div class="col-lg-12 top-section">
-        <div class="top-section__text">
-          <div class="top-section-text__name"></div>
-          <div class="top-section-text__status"></div>
+    <div class="col-lg-9 wrap">
+      <div class="col-lg-12 top">
+        <div class="top__text">
+          <div class="top-text__name"></div>
+          <div class="top-text__status"></div>
         </div>
-        <div class="top-section__control-element"></div>          
+        <div class="top__control"></div>          
       </div>
-      <div class="col-lg-12 middle-section">
-        <div class="col-lg-8 chat-section">
-          <div class="col-lg-12 chat-history scroll">
+      <div class="col-lg-12 chat-wrap">
+        <div class="col-lg-8 chat">
+          <div class="col-lg-12 chat__history scroll">
           </div>
-          <div class="col-lg-12 send-message-section">    
+          <div class="col-lg-12 chat__message-box">    
             <form class="message-box" action="" method="POST">
               <div class="message-box__attachments">
               </div>
@@ -55,24 +55,24 @@
         <div class="col-lg-4 side-panel side-panel_show scroll">
           <div class="col-lg-12 side-panel__shared side-panel__shared_files">
             <div class="shared__head">
-              <div class="shared-head__text">Shared Files</div>
-              <div class="shared-head__control-element"></div>
+              <div class="shared-head__title">Shared Files</div>
+              <div class="shared-head__control" data-test-id="shared-files"></div>
             </div>
-            <div class="shared__content shared__content_files"></div>
+            <div class="shared__content shared__content_files" data-testid="shared-files"></div>
           </div>
           <div class="col-lg-12 side-panel__shared side-panel__shared_audio">
             <div class="shared__head">
-              <div class="shared-head__text">Shared Audio</div>
-              <div class="shared-head__control-element"></div>
+              <div class="shared-head__title">Shared Audio</div>
+              <div class="shared-head__control" data-test-id="shared-audio"></div>
             </div>
-            <div class="shared__content shared__content_audio"></div>
+            <div class="shared__content shared__content_audio" data-testid="shared-audio"></div>
           </div>
           <div class="col-lg-12 side-panel__shared side-panel__shared_photos">
             <div class="shared__head">
-              <div class="shared-head__text">Shared Photos</div>
-              <div class="shared-head__control-element"></div>
+              <div class="shared-head__title">Shared Photos</div>
+              <div class="shared-head__control" data-test-id="shared-photo"></div>
             </div>
-            <div class="shared__content shared__content_photos"></div>
+            <div class="shared__content shared__content_photos" data-testid="shared-photo"></div>
           </div>
         </div>
       </div>
@@ -84,19 +84,27 @@
       <a class="options-menu__item options-menu__item_shared-files">Shared Files</a>
       <a class="options-menu__item options-menu__item_clear-history">Clear History</a>
     </div>
-    <div class="photo-box">
-      <div class="photo-box__closeBtn"></div>
-      <div class="photo-box__app">        
-        <video src=""></video>
-        <div class="photo-box-app__controls">
-          <button id="take-photo" title="Сделать снимок"><i class="material-icons">photo</i></button>          
+    <div class="videorecorder">
+      <div class="videorecorder__closeBtn"></div>
+      <div class="videorecorder__app">   
+        <div class="videorecorder-app__photo videorecorder-app__photo_hide">
+          <img class="app-photo__img" src="">
+          <div class="app-photo__cancelBtn"></div>
+          <div class="app-photo__okBtn"></div>
+          <canvas class="app-photo__canvas"></canvas>
         </div>
+        <div class="videorecorder-app__video">
+          <video class="app__video" src=""></video>
+          <div class="app__controls">
+            <button id="take-photo" title="Сделать снимок"><i>photo</i></button>          
+          </div>
+        </div>          
       </div>
     </div>
-    <div class="image-view-box"> 
-      <div class="image-view-box__closeBtn"></div>
-      <div class="image-view-box__top">        
-        <img class="image-view-box-top__pic" src="">
+    <div class="presenter"> 
+      <div class="presenter__closeBtn"></div>
+      <div class="presenter__top">        
+        <img class="presenter-top__pic" src="">
       </div>
     </div>
   <script src="js/index.js"></script>
