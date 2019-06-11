@@ -302,7 +302,7 @@ function clearHistory() {
   sidePanelAudio.textContent = '';
   sidePanelPhotos.textContent = '';   
 
-  const lastMessage = document.querySelector('.contacts__item_active  .contact-item-text__message')
+  const lastMessage = document.querySelector('.contacts__item_active  .contact-item-text__message');
   lastMessage.textContent = '';
  
   const otherUserId = document.querySelector('.contacts__item_active').dataset.userId;
@@ -348,9 +348,15 @@ function clickMsgBoxPhotoBtn(ev) {
 
   navigator.mediaDevices
     .getUserMedia({video: true, audio: false})
-    .then(stream => {      
-      video.src = URL.createObjectURL(stream);     
+    .then(stream => {
+    	if ('srcObject' in video) {
+			  video.srcObject = stream;
+			} else {
+			  // Для использования в старых версиях браузеров
+			  video.src = URL.createObjectURL(stream);
+			}
       videoStream = stream;
+      video.play();
     });
 
   msgBoxPhotoBtn.disabled = true;
@@ -384,7 +390,10 @@ function closePhotoBox() {
   
   videoStream.getVideoTracks().map(track => track.stop());
 
-  URL.revokeObjectURL(video.src);
+  // Для использования в старых версиях браузеров
+  if ('srcObject' in video) {
+		URL.revokeObjectURL(video.src);
+	}  
 
   photo.src = '';
   wrapPhoto.classList.add('videorecorder-app__photo_hide');
