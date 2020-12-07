@@ -1,7 +1,7 @@
-Необходимо реализовать приложение "Сервис обмена сообщениями". Приложение будет запускаться и работать в браузере. После реализации версия проекта будет доступна по ссылке: [https://maksim-maslov.github.io/dp-hj](https://maksim-maslov.github.io/dp-hj)
+Необходимо реализовать приложение "Сервис обмена сообщениями". Приложение будет запускаться и работать в браузере. После реализации версия проекта будет доступна по ссылке: [https://maksim-maslov.github.io/javascript-sample](https://maksim-maslov.github.io/javascript-sample)
 
 
-![preview.png](https://github.com/maksim-maslov/dp-hj/blob/master/res/preview.png)
+![preview.png](https://github.com/maksim-maslov/javascript-sample/blob/master/res/preview.png)
 
 ### Описание
 
